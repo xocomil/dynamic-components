@@ -23,7 +23,7 @@ type DynamicComponents =
         [(ngModel)]="componentName"
         placeholder="Enter one, two, or three"
       />
-      <button type="button" (click)="addComponent()">Add Component One</button>
+      <button type="button" (click)="addComponent()">Add Component</button>
     </div>
     <div *ngComponentOutlet="(component$ | ngrxPush) ?? null"></div>
   `,
