@@ -6,6 +6,7 @@ import { ComponentOneComponent } from '../component-one/component-one.component'
 import { ComponentTwoComponent } from '../component-two/component-two.component';
 import { ComponentThreeComponent } from '../component-three/component-three.component';
 import { FormsModule } from '@angular/forms';
+import { DynamicHostStore } from './dynamic-host.store';
 
 type DynamicComponents =
   | ComponentOneComponent
@@ -29,6 +30,7 @@ type DynamicComponents =
   `,
   styleUrls: ['./dynamic-host.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [DynamicHostStore],
 })
 export class DynamicHostComponent {
   protected componentName = 'one';
