@@ -8,3 +8,10 @@
   border-radius: var(--border-radius);
   padding: var(--base-padding);
 }
+
+.json-input {
+  textarea {
+    width: 100%;
+    height: 6rem;
+  }
+}
