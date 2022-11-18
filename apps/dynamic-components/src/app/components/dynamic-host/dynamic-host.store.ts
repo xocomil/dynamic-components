@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
+import { User } from '../../models/user.model';
 
 export interface DynamicHostState {
-  user: { firstName: string; lastName: string; age: number };
+  user: User;
 }
 
 const initialState = () => ({

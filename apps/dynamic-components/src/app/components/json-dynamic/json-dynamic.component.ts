@@ -9,6 +9,14 @@ import { FormsModule } from '@angular/forms';
 import { JsonComponentHostDirective } from './json-component-host.directive';
 import { isMatching, P } from 'ts-pattern';
 import { DynamicHostStore } from '../dynamic-host/dynamic-host.store';
+import { ComponentOneComponent } from '../component-one/component-one.component';
+import { ComponentTwoComponent } from '../component-two/component-two.component';
+import { ComponentThreeComponent } from '../component-three/component-three.component';
+
+type DynamicComponents =
+  | ComponentOneComponent
+  | ComponentTwoComponent
+  | ComponentThreeComponent;
 
 @Component({
   selector: 'dynamic-components-json-dynamic',
@@ -27,7 +35,8 @@ import { DynamicHostStore } from '../dynamic-host/dynamic-host.store';
   providers: [DynamicHostStore],
 })
 export class JsonDynamicComponent {
-  protected componentJson = '{ "components": ["one", "two", "three"] }';
+  protected componentJson =
+    '{ "components": [{"componentType": "one", "data": {"firstName": "from", "lastName": "server", "age": 23}}, "two", "three"] }';
 
   @ViewChild(JsonComponentHostDirective, { static: true })
   protected hostContainer?: JsonComponentHostDirective;
@@ -61,15 +70,27 @@ export class JsonDynamicComponent {
       const component =
         this.hostContainer?.viewContainerRef.createComponent(componentToLoad);
 
+      if (
+        component?.instance.componentType === 'COMPONENT_ONE' &&
+        typeof componentName !== 'string'
+      ) {
+        component.setInput('user', componentName.data);
+      }
+
       component?.changeDetectorRef.markForCheck();
     });
   }
 }
 
 const getComponentToLoad = (
-  componentName: string
-): Promise<Type<unknown>> | undefined => {
-  switch (componentName) {
+  componentName: string | { componentType: string }
+): Promise<Type<DynamicComponents>> | undefined => {
+  const componentToLoad =
+    typeof componentName === 'string'
+      ? componentName
+      : componentName.componentType;
+
+  switch (componentToLoad) {
     case 'one':
       return import('../component-one/component-one.component').then(
         (component) => component.ComponentOneComponent
@@ -93,5 +114,14 @@ const getComponentToLoad = (
 
 const checkHasComponents = (
   jsonObject: unknown
-): jsonObject is { components: string[] } =>
-  isMatching({ components: P.array(P.string) }, jsonObject);
+): jsonObject is {
+  components: (string | { componentType: string; data: unknown })[];
+} =>
+  isMatching(
+    {
+      components: P.array(
+        P.union(P.string, { componentType: P.string, data: P._ })
+      ),
+    },
+    jsonObject
+  );
