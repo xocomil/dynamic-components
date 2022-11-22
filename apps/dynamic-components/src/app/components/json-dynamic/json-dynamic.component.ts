@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { JsonComponentHostDirective } from './json-component-host.directive';
+import { JsonComponentHostDirective } from '../../directives/json-component-host.directive';
 import { DynamicHostStore } from '../dynamic-host/dynamic-host.store';
 import { ComponentOneComponent } from '../component-one/component-one.component';
 import { ComponentTwoComponent } from '../component-two/component-two.component';
