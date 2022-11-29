@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -9,8 +9,6 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./component-two.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ComponentTwoComponent implements OnInit {
-  constructor() {}
-
-  ngOnInit(): void {}
+export class ComponentTwoComponent {
+  public readonly componentType = 'COMPONENT_TWO';
 }

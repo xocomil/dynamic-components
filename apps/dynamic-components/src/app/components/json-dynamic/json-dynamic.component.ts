@@ -6,9 +6,34 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { JsonComponentHostDirective } from './json-component-host.directive';
-import { isMatching, P } from 'ts-pattern';
+import { JsonComponentHostDirective } from '../../directives/json-component-host.directive';
 import { DynamicHostStore } from '../dynamic-host/dynamic-host.store';
+import { ComponentOneComponent } from '../component-one/component-one.component';
+import { ComponentTwoComponent } from '../component-two/component-two.component';
+import { ComponentThreeComponent } from '../component-three/component-three.component';
+import { z } from 'zod';
+
+const validator = z.object({
+  components: z.array(
+    z.union([
+      z.literal('two'),
+      z.literal('three'),
+      z.object({
+        componentType: z.literal('one'),
+        data: z.object({
+          firstName: z.string(),
+          lastName: z.string(),
+          age: z.number(),
+        }),
+      }),
+    ])
+  ),
+});
+
+type DynamicComponents =
+  | ComponentOneComponent
+  | ComponentTwoComponent
+  | ComponentThreeComponent;
 
 @Component({
   selector: 'dynamic-components-json-dynamic',
@@ -27,16 +52,20 @@ import { DynamicHostStore } from '../dynamic-host/dynamic-host.store';
   providers: [DynamicHostStore],
 })
 export class JsonDynamicComponent {
-  protected componentJson = '{ "components": ["one", "two", "three"] }';
+  protected componentJson =
+    '{ "components": [{"componentType": "one", "data": {"firstName": "from", "lastName": "server", "age": 23}}, "two", "three"] }';
 
   @ViewChild(JsonComponentHostDirective, { static: true })
   protected hostContainer?: JsonComponentHostDirective;
 
   protected loadComponents(): void {
-    const items = JSON.parse(this.componentJson);
+    const data = JSON.parse(this.componentJson);
+    const parsedData = validator.safeParse(data);
 
-    if (!checkHasComponents(items)) {
-      console.error('Invalid JSON. Should be of form {components: string[]}.');
+    console.log('data from zod', parsedData);
+
+    if (!parsedData.success) {
+      console.log('Invalid JSON.', parsedData.error);
 
       return;
     }
@@ -49,11 +78,11 @@ export class JsonDynamicComponent {
 
     this.hostContainer.viewContainerRef.clear();
 
-    items.components.forEach(async (componentName) => {
-      const componentToLoad = await getComponentToLoad(componentName);
+    parsedData.data.components.forEach(async (componentDescription) => {
+      const componentToLoad = await getComponentToLoad(componentDescription);
 
       if (!componentToLoad) {
-        console.error('Component not found:' + componentName);
+        console.error('Component not found:' + componentDescription);
 
         return;
       }
@@ -61,15 +90,27 @@ export class JsonDynamicComponent {
       const component =
         this.hostContainer?.viewContainerRef.createComponent(componentToLoad);
 
+      if (
+        component?.instance.componentType === 'COMPONENT_ONE' &&
+        typeof componentDescription !== 'string'
+      ) {
+        component.setInput('user', componentDescription.data);
+      }
+
       component?.changeDetectorRef.markForCheck();
     });
   }
 }
 
 const getComponentToLoad = (
-  componentName: string
-): Promise<Type<unknown>> | undefined => {
-  switch (componentName) {
+  componentDescription: string | { componentType: string }
+): Promise<Type<DynamicComponents>> | undefined => {
+  const componentToLoad =
+    typeof componentDescription === 'string'
+      ? componentDescription
+      : componentDescription.componentType;
+
+  switch (componentToLoad) {
     case 'one':
       return import('../component-one/component-one.component').then(
         (component) => component.ComponentOneComponent
@@ -84,14 +125,9 @@ const getComponentToLoad = (
       );
     default:
       console.warn(
-        `I don't know what ${componentName} is. Enter "one", "two" or "three"`
+        `I don't know what ${componentDescription} is. Enter "one", "two" or "three"`
       );
 
       return undefined;
   }
 };
-
-const checkHasComponents = (
-  jsonObject: unknown
-): jsonObject is { components: string[] } =>
-  isMatching({ components: P.array(P.string) }, jsonObject);

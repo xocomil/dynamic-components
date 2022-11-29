@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -9,8 +9,6 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./component-three.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ComponentThreeComponent implements OnInit {
-  constructor() {}
-
-  ngOnInit(): void {}
+export class ComponentThreeComponent {
+  public readonly componentType = 'COMPONENT_THREE';
 }
