@@ -1,11 +1,14 @@
-import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { JsonComponentHostDirective } from '../../directives/json-component-host.directive';
-import { InputComponent } from '../input/input.component';
 import { formValidator } from './dynamic-form-json.validator';
-
-type InputType = InputComponent;
+import { DynamicComponentService } from './services/dynamic-component.service';
 
 @Component({
   selector: 'dynamic-components-dynamic-form',
@@ -28,8 +31,11 @@ type InputType = InputComponent;
 
   styleUrls: ['./dynamic-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [DynamicComponentService],
 })
 export class DynamicFormComponent {
+  readonly #dynamicComponentService = inject(DynamicComponentService);
+
   protected componentJson = `{ "inputs": [
     {
       "form_id": "name",
@@ -47,10 +53,50 @@ export class DynamicFormComponent {
   @ViewChild(JsonComponentHostDirective, { static: true })
   protected readonly hostContainer?: JsonComponentHostDirective;
 
-  protected loadComponents() {
+  protected async loadComponents() {
+    const parsedInputs = this.#parseJsonFromInput();
+
+    if (!parsedInputs.success) {
+      console.error('Could not parse form inputs', parsedInputs.error);
+
+      return;
+    }
+
+    for (const input of parsedInputs.data.inputs) {
+      const inputPromise = this.#dynamicComponentService.getComponentFromType(
+        input.inputType
+      );
+
+      if (inputPromise == null) {
+        console.warn(`Could not find input for ${input.inputType}:`, input);
+
+        continue;
+      }
+
+      if (!this.hostContainer) {
+        throw new Error(
+          'You need to provide a host container to use a dynamic form'
+        );
+      }
+
+      const component = await inputPromise;
+
+      const addedComponent =
+        this.hostContainer.viewContainerRef.createComponent(component);
+
+      addedComponent.setInput('label', input.label);
+      addedComponent.setInput('placeholder', input.placeholder);
+
+      addedComponent.changeDetectorRef.markForCheck();
+    }
+  }
+
+  #parseJsonFromInput(): typeof formInputs {
     const jsonData = JSON.parse(this.componentJson);
     const formInputs = formValidator.safeParse(jsonData);
 
     console.log('zod parsed data', formInputs);
+
+    return formInputs;
   }
 }

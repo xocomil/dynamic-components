@@ -11,7 +11,12 @@ import { ControlContainer, FormsModule, NgForm } from '@angular/forms';
   selector: 'dynamic-components-input',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  template: ` <label>{{ label }}: <input [(ngModel)]="value" /></label> `,
+  template: `
+    <label
+      >{{ label }}:
+      <input [(ngModel)]="value" [ngModelOptions]="{ standalone: true }"
+    /></label>
+  `,
   styleUrls: ['./input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   viewProviders: [{ provide: ControlContainer, useExisting: NgForm }],
@@ -24,3 +29,5 @@ export class InputComponent {
   @Input() value = '';
   @Input() placeholder = 'Enter some text';
 }
+
+export default InputComponent;
