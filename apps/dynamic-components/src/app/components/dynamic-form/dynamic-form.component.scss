@@ -1,3 +1,10 @@
 :host {
   display: block;
 }
+
+.json-input {
+  > textarea {
+    width: 85%;
+    height: 12rem;
+  }
+}
