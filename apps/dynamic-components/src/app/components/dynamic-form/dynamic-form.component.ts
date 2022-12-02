@@ -38,7 +38,7 @@ export class DynamicFormComponent {
 
   protected componentJson = `{ "inputs": [
     {
-      "form_id": "favDino",
+      "formId": "favDino",
       "inputType": "string",
       "required": true,
       "minLength": 5,
@@ -86,8 +86,7 @@ export class DynamicFormComponent {
       const addedComponent =
         this.hostContainer.viewContainerRef.createComponent(component);
 
-      addedComponent.setInput('label', input.label);
-      addedComponent.setInput('placeholder', input.placeholder);
+      addedComponent.setInput('settings', input);
 
       addedComponent.changeDetectorRef.markForCheck();
     }

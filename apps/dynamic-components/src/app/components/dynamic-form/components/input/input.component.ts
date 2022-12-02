@@ -6,6 +6,7 @@ import {
   Input,
 } from '@angular/core';
 import { ControlContainer, FormsModule, NgForm } from '@angular/forms';
+import { FormSettings } from '../../dynamic-form-json.validator';
 
 @Component({
   selector: 'dynamic-components-input',
@@ -13,11 +14,11 @@ import { ControlContainer, FormsModule, NgForm } from '@angular/forms';
   imports: [CommonModule, FormsModule],
   template: `
     <label
-      >{{ label }}:
+      >{{ settings?.label }}:
       <input
         [(ngModel)]="value"
-        [ngModelOptions]="{ standalone: true }"
-        [placeholder]="placeholder"
+        [name]="settings?.formId ?? 'unknown'"
+        [placeholder]="settings?.placeholder"
     /></label>
   `,
   styleUrls: ['./input.component.scss'],
@@ -28,9 +29,8 @@ export class InputComponent {
   readonly componentType = 'input';
   protected form = inject(NgForm);
 
-  @Input() label = 'Input Label';
-  @Input() value = '';
-  @Input() placeholder = 'Enter some text';
+  protected value = '';
+  @Input() settings?: FormSettings;
 }
 
 export default InputComponent;
