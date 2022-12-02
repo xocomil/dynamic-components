@@ -1,10 +1,10 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   Input,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ControlContainer, FormsModule, NgForm } from '@angular/forms';
 
 @Component({
@@ -14,7 +14,10 @@ import { ControlContainer, FormsModule, NgForm } from '@angular/forms';
   template: `
     <label
       >{{ label }}:
-      <input [(ngModel)]="value" [ngModelOptions]="{ standalone: true }"
+      <input
+        [(ngModel)]="value"
+        [ngModelOptions]="{ standalone: true }"
+        [placeholder]="placeholder"
     /></label>
   `,
   styleUrls: ['./input.component.scss'],
