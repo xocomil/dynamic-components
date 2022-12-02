@@ -44,7 +44,7 @@ export class DynamicFormComponent {
       "minLength": 5,
       "maxLength": 50,
       "placeholder": "Enter one with feathers",
-      "label": "Favorite Dinosaur:"
+      "label": "Favorite Dinosaur"
     }
   ] }`;
 
@@ -61,6 +61,8 @@ export class DynamicFormComponent {
 
       return;
     }
+
+    this.hostContainer?.viewContainerRef.clear();
 
     for (const input of parsedInputs.data.inputs) {
       const inputPromise = this.#dynamicComponentService.getComponentFromType(
