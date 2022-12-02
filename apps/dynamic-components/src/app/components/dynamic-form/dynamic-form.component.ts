@@ -1,10 +1,10 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   ViewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { JsonComponentHostDirective } from '../../directives/json-component-host.directive';
 import { formValidator } from './dynamic-form-json.validator';
@@ -38,13 +38,13 @@ export class DynamicFormComponent {
 
   protected componentJson = `{ "inputs": [
     {
-      "form_id": "name",
+      "form_id": "favDino",
       "inputType": "string",
       "required": true,
       "minLength": 5,
       "maxLength": 50,
-      "placeholder": "Enter your name",
-      "label": "First Name:"
+      "placeholder": "Enter one with feathers",
+      "label": "Favorite Dinosaur:"
     }
   ] }`;
 
