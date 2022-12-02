@@ -23,10 +23,8 @@ import { DynamicComponentService } from './services/dynamic-component.service';
     <form #form="ngForm">
       <div class="dynamic-components" dynamicComponentsJsonComponentHost></div>
     </form>
-    <pre>
-      {{ form.value | json }}
-    </pre
-    >
+    <pre>{{ form.value | json }}</pre>
+    <strong>Form Valid?</strong> {{ form.valid }}
   `,
 
   styleUrls: ['./dynamic-form.component.scss'],
