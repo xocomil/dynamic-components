@@ -43,6 +43,11 @@ export class DynamicFormComponent {
       "maxLength": 50,
       "placeholder": "Enter one with feathers",
       "label": "Favorite Dinosaur"
+    },
+    {
+      "formId": "hasFeathers",
+      "inputType": "checkbox",
+      "label": "Has Feathers"
     }
   ] }`;
 
