@@ -3,8 +3,18 @@
 }
 
 .json-input {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 0.25rem;
+  height: 12rem;
+
   > textarea {
-    width: 85%;
-    height: 12rem;
+    flex-grow: 1;
+  }
+
+  > button {
+    flex-grow: 0;
+    height: 1.2rem;
   }
 }

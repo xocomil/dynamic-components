@@ -18,6 +18,8 @@ import { DynamicComponentService } from './services/dynamic-component.service';
     <div class="json-input">
       <textarea name="componentJson" [(ngModel)]="componentJson"></textarea>
       <button type="button" (click)="loadComponents()">Load!</button>
+      <textarea name="formData" [(ngModel)]="formValuesJson"></textarea>
+      <button type="button" (click)="fillForm()">Fill Form!</button>
     </div>
     <hr />
     <form #form="ngForm">
@@ -50,6 +52,11 @@ export class DynamicFormComponent {
       "label": "Has Feathers"
     }
   ] }`;
+
+  protected formValuesJson = `{
+    "favDino": "velociraptor",
+    "hasFeathers": true
+  }`;
 
   @ViewChild('form', { static: true }) protected readonly form!: NgForm;
 
@@ -102,5 +109,9 @@ export class DynamicFormComponent {
     console.log('zod parsed data', formInputs);
 
     return formInputs;
+  }
+
+  protected fillForm() {
+    console.log('formValuesJson', this.formValuesJson);
   }
 }
