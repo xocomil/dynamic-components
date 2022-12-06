@@ -112,6 +112,10 @@ export class DynamicFormComponent {
   }
 
   protected fillForm() {
-    console.log('formValuesJson', this.formValuesJson);
+    const jsonValues = JSON.parse(this.formValuesJson);
+
+    Object.entries(jsonValues).forEach(([key, value]) => {
+      this.form.controls[key]?.setValue(value);
+    });
   }
 }
