@@ -1,10 +1,10 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   ViewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { JsonComponentHostDirective } from '../../directives/json-component-host.directive';
 import { formValidator } from './dynamic-form-json.validator';
@@ -23,10 +23,8 @@ import { DynamicComponentService } from './services/dynamic-component.service';
     <form #form="ngForm">
       <div class="dynamic-components" dynamicComponentsJsonComponentHost></div>
     </form>
-    <pre>
-      {{ form.value | json }}
-    </pre
-    >
+    <pre>{{ form.value | json }}</pre>
+    <strong>Form Valid?</strong> {{ form.valid }}
   `,
 
   styleUrls: ['./dynamic-form.component.scss'],
@@ -38,13 +36,13 @@ export class DynamicFormComponent {
 
   protected componentJson = `{ "inputs": [
     {
-      "form_id": "name",
+      "formId": "favDino",
       "inputType": "string",
       "required": true,
       "minLength": 5,
       "maxLength": 50,
-      "placeholder": "Enter your name",
-      "label": "First Name:"
+      "placeholder": "Enter one with feathers",
+      "label": "Favorite Dinosaur"
     }
   ] }`;
 
@@ -61,6 +59,8 @@ export class DynamicFormComponent {
 
       return;
     }
+
+    this.hostContainer?.viewContainerRef.clear();
 
     for (const input of parsedInputs.data.inputs) {
       const inputPromise = this.#dynamicComponentService.getComponentFromType(
@@ -84,8 +84,7 @@ export class DynamicFormComponent {
       const addedComponent =
         this.hostContainer.viewContainerRef.createComponent(component);
 
-      addedComponent.setInput('label', input.label);
-      addedComponent.setInput('placeholder', input.placeholder);
+      addedComponent.setInput('settings', input);
 
       addedComponent.changeDetectorRef.markForCheck();
     }

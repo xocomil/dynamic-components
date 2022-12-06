@@ -4,7 +4,7 @@ export const formValidator = z.object({
   inputs: z.array(
     z.object({
       inputType: z.literal('string'),
-      form_id: z.string(),
+      formId: z.string(),
       required: z
         .boolean()
         .optional()
@@ -17,4 +17,5 @@ export const formValidator = z.object({
   ),
 });
 
-export type FormData = z.infer<typeof formValidator>;
+type ParsedFormData = z.infer<typeof formValidator>;
+export type FormSettings = ParsedFormData['inputs'][0];
