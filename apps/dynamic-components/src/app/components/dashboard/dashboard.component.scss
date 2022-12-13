@@ -1,3 +1,35 @@
 :host {
+  --primary-color: hsl(231deg 48% 48%);
+  --on-top-color: hsl(0deg 0% 100%);
+  --padding: 0.5rem;
+
   display: block;
+  padding: var(--padding);
+}
+
+header {
+  --anti-padding: calc(var(--padding) * -1);
+
+  background-color: var(--primary-color);
+  color: var(--on-top-color);
+  font-size: 2rem;
+  padding: 0.5rem;
+  margin: var(--anti-padding) var(--anti-padding) 0 var(anti-padding); // t r b l
+}
+
+content {
+  margin-top: 0.25rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  > * {
+    height: 250px;
+    width: 250px;
+  }
+}
+
+.just-a-div {
+  border: 1px solid var(--primary-color);
 }
