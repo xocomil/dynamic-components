@@ -12,7 +12,7 @@ import {
   NgForm,
   Validators,
 } from '@angular/forms';
-import { FormSettings } from '../../dynamic-form-json.validator';
+import { TextboxSettings } from '../../dynamic-form-json.validator';
 
 @Component({
   selector: 'dynamic-components-input',
@@ -38,7 +38,7 @@ export class InputComponent implements OnInit {
 
   protected value = '';
 
-  @Input() settings?: FormSettings;
+  @Input() settings?: TextboxSettings;
 
   ngOnInit(): void {
     this.#updateOptionalValidators();
