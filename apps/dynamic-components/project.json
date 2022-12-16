@@ -7,7 +7,9 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/dynamic-components",
         "index": "apps/dynamic-components/src/index.html",
@@ -19,7 +21,10 @@
           "apps/dynamic-components/src/favicon.ico",
           "apps/dynamic-components/src/assets"
         ],
-        "styles": ["apps/dynamic-components/src/styles.scss"],
+        "styles": [
+          "@angular/material/prebuilt-themes/indigo-pink.css",
+          "apps/dynamic-components/src/styles.scss"
+        ],
         "scripts": []
       },
       "configurations": {
@@ -84,7 +89,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "apps/dynamic-components/jest.config.ts",
         "passWithNoTests": true
