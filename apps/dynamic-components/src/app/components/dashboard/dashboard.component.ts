@@ -14,11 +14,13 @@ import { BarChartComponent } from '@dash/dashboard';
   template: `
     <header>Welcome to our Dashboard!</header>
     <content>
-      <dash-bar-chart></dash-bar-chart>
+      <dash-bar-chart
+        title="Hours Worked"
+        subTitle="How busy were you?"
+      ></dash-bar-chart>
       <mat-card>Card 2</mat-card>
       <mat-card>Card 3</mat-card>
       <mat-card>Card 4</mat-card>
-      <div class="just-a-div">I'm just a div!</div>
     </content>
   `,
   styleUrls: ['./dashboard.component.scss'],
