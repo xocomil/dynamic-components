@@ -2,6 +2,7 @@
   --primary-color: hsl(231deg 48% 48%);
   --on-top-color: hsl(0deg 0% 100%);
   --padding: 0.5rem;
+  --widget-size: 320px;
 
   display: block;
   padding: var(--padding);
@@ -14,7 +15,7 @@ header {
   color: var(--on-top-color);
   font-size: 2rem;
   padding: 0.5rem;
-  margin: var(--anti-padding) var(--anti-padding) 0 var(anti-padding); // t r b l
+  margin: var(--anti-padding) var(--anti-padding) 0 var(--anti-padding); // t r b l
 }
 
 content {
@@ -25,8 +26,8 @@ content {
   flex-wrap: wrap;
 
   > * {
-    height: 250px;
-    width: 250px;
+    height: var(--widget-size);
+    width: var(--widget-size);
   }
 }
 
