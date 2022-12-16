@@ -27,7 +27,7 @@ content {
 
   > * {
     height: var(--widget-size);
-    width: var(--widget-size);
+    width: calc(var(--widget-size) * 1.5);
   }
 }
 
