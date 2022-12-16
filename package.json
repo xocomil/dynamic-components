@@ -24,7 +24,6 @@
     "@ngrx/component": "15.0.0",
     "@ngrx/component-store": "15.0.0",
     "@nrwl/angular": "15.3.3",
-    "chart.js": "^4.0.1",
     "rxjs": "~7.6.0",
     "ts-pattern": "^4.0.6",
     "tslib": "^2.3.0",
