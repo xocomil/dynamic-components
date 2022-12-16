@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  inject,
   Input,
   ViewEncapsulation,
 } from '@angular/core';
@@ -15,10 +14,7 @@ import {
   VisTooltipModule,
   VisXYContainerModule,
 } from '@unovis/angular';
-import {
-  BAR_CHART_DATASOURCE_SERVICE,
-  HoursWorkedDataSourceService,
-} from './hours-worked-data-source.service';
+import { DataSource } from '../models/datasource';
 
 @Component({
   selector: 'dash-bar-chart',
@@ -40,20 +36,20 @@ import {
         <mat-card-subtitle *ngIf="subTitle">{{ subTitle }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-        <vis-xy-container [data]="dataSource.data$ | ngrxPush">
+        <vis-xy-container [data]="dataSource?.data$ | ngrxPush">
           <vis-tooltip></vis-tooltip>
           <vis-grouped-bar
-            [x]="dataSource.x"
-            [y]="dataSource.y"
+            [x]="dataSource?.x"
+            [y]="dataSource?.y"
           ></vis-grouped-bar>
           <vis-axis
             type="x"
             [gridLine]="true"
-            [tickFormat]="dataSource.tickFormat"
+            [tickFormat]="dataSource?.tickFormat"
             [numTicks]="7"
           ></vis-axis>
           <vis-axis type="y" [gridLine]="true"></vis-axis>
-          <vis-crosshair [template]="dataSource.template"></vis-crosshair>
+          <vis-crosshair [template]="dataSource?.template"></vis-crosshair>
         </vis-xy-container>
       </mat-card-content>
     </mat-card>
@@ -61,15 +57,9 @@ import {
   styleUrls: ['./bar-chart.component.scss'],
   encapsulation: ViewEncapsulation.Emulated,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: BAR_CHART_DATASOURCE_SERVICE,
-      useClass: HoursWorkedDataSourceService,
-    },
-  ],
 })
 export class BarChartComponent {
-  protected readonly dataSource = inject(BAR_CHART_DATASOURCE_SERVICE);
+  @Input() dataSource?: DataSource;
 
   @Input() title = 'Bar Chart';
   @Input() subTitle?: string;
