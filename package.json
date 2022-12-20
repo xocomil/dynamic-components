@@ -26,6 +26,7 @@
     "@nrwl/angular": "15.3.3",
     "@unovis/angular": "^1.0.0",
     "@unovis/ts": "^1.0.0",
+    "date-fns": "^2.29.3",
     "rxjs": "~7.6.0",
     "ts-pattern": "^4.0.6",
     "tslib": "^2.3.0",

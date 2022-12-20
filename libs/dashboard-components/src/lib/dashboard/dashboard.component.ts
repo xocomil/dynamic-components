@@ -2,19 +2,20 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   ViewEncapsulation,
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import {
-  BarChartComponent,
-  HoursWorkedDataSourceService,
-  SalesByPersonDataSourceService,
-} from '@dash/dashboard';
+import { BarChartComponent } from '../dashboard-components/bar-chart/bar-chart.component';
+import { LineChartComponent } from '../dashboard-components/line-chart/line-chart.component';
+import { HoursWorkedDataSourceService } from '../data-source/hours-worked-data-source.service';
+import { SalesByPersonDataSourceService } from '../data-source/sales-by-person-data-source.service';
+import { ValueOverTimeDataSourceService } from '../data-source/value-over-time-data-source.service';
 
 @Component({
-  selector: 'dynamic-components-dashboard',
+  selector: 'dash-dashboard',
   standalone: true,
-  imports: [CommonModule, MatCardModule, BarChartComponent],
+  imports: [BarChartComponent, CommonModule, LineChartComponent, MatCardModule],
   template: `
     <header>Welcome to our Dashboard!</header>
     <content>
@@ -28,15 +29,25 @@ import {
         subTitle="Who sold the most?"
         [dataSource]="salesByPersonDataSource"
       ></dash-bar-chart>
-      <mat-card>Card 3</mat-card>
+      <dash-line-chart
+        title="Value Over Time"
+        subTitle="Watch things change"
+        [dataSource]="valueOverTimeDataSource"
+      ></dash-line-chart>
       <mat-card>Card 4</mat-card>
     </content>
   `,
   styleUrls: ['./dashboard.component.scss'],
   encapsulation: ViewEncapsulation.Emulated,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    HoursWorkedDataSourceService,
+    SalesByPersonDataSourceService,
+    ValueOverTimeDataSourceService,
+  ],
 })
-export default class DashboardComponent {
-  protected hoursWorkedDataSource = new HoursWorkedDataSourceService();
-  protected salesByPersonDataSource = new SalesByPersonDataSourceService();
+export class DashboardComponent {
+  protected hoursWorkedDataSource = inject(HoursWorkedDataSourceService);
+  protected salesByPersonDataSource = inject(SalesByPersonDataSourceService);
+  protected valueOverTimeDataSource = inject(ValueOverTimeDataSourceService);
 }
