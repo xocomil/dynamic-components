@@ -5,7 +5,11 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { BarChartComponent } from '@dash/dashboard';
+import {
+  BarChartComponent,
+  HoursWorkedDataSourceService,
+  SalesByPersonDataSourceService,
+} from '@dash/dashboard';
 
 @Component({
   selector: 'dynamic-components-dashboard',
@@ -14,15 +18,25 @@ import { BarChartComponent } from '@dash/dashboard';
   template: `
     <header>Welcome to our Dashboard!</header>
     <content>
-      <dash-bar-chart></dash-bar-chart>
-      <mat-card>Card 2</mat-card>
+      <dash-bar-chart
+        title="Hours Worked"
+        subTitle="How busy were you?"
+        [dataSource]="hoursWorkedDataSource"
+      ></dash-bar-chart>
+      <dash-bar-chart
+        title="Sales By Person"
+        subTitle="Who sold the most?"
+        [dataSource]="salesByPersonDataSource"
+      ></dash-bar-chart>
       <mat-card>Card 3</mat-card>
       <mat-card>Card 4</mat-card>
-      <div class="just-a-div">I'm just a div!</div>
     </content>
   `,
   styleUrls: ['./dashboard.component.scss'],
   encapsulation: ViewEncapsulation.Emulated,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class DashboardComponent {}
+export default class DashboardComponent {
+  protected hoursWorkedDataSource = new HoursWorkedDataSourceService();
+  protected salesByPersonDataSource = new SalesByPersonDataSourceService();
+}
