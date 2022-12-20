@@ -31,6 +31,7 @@ export class ValueOverTimeDataSourceService implements DataSource {
 
   x = (d: DataRecord) => d.index;
   y = (d: DataRecord) => d.value;
+  value = (d: DataRecord) => d.value;
 
   readonly template = (dataRecord: DataRecord) => {
     return `${format(dataRecord.date, 'MMM-dd-yy')}: $${dataRecord.value}`;

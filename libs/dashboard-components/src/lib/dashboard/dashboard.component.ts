@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { BarChartComponent } from '../dashboard-components/bar-chart/bar-chart.component';
+import { DonutChartComponent } from '../dashboard-components/donut-chart/donut-chart.component';
 import { LineChartComponent } from '../dashboard-components/line-chart/line-chart.component';
 import { HoursWorkedDataSourceService } from '../data-source/hours-worked-data-source.service';
 import { SalesByPersonDataSourceService } from '../data-source/sales-by-person-data-source.service';
@@ -15,7 +16,13 @@ import { ValueOverTimeDataSourceService } from '../data-source/value-over-time-d
 @Component({
   selector: 'dash-dashboard',
   standalone: true,
-  imports: [BarChartComponent, CommonModule, LineChartComponent, MatCardModule],
+  imports: [
+    BarChartComponent,
+    CommonModule,
+    LineChartComponent,
+    MatCardModule,
+    DonutChartComponent,
+  ],
   template: `
     <header>Welcome to our Dashboard!</header>
     <content>
@@ -34,7 +41,11 @@ import { ValueOverTimeDataSourceService } from '../data-source/value-over-time-d
         subTitle="Watch things change"
         [dataSource]="valueOverTimeDataSource"
       ></dash-line-chart>
-      <mat-card>Card 4</mat-card>
+      <dash-donut-chart
+        title="Hours Worked"
+        subTitle="Mmmmmmmgghgmm donuts..."
+        [dataSource]="hoursWorkedDataSource"
+      ></dash-donut-chart>
     </content>
   `,
   styleUrls: ['./dashboard.component.scss'],
