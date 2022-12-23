@@ -30,6 +30,10 @@ export class SalesByPersonDataSourceService implements DataSource {
   x = (d: DataRecord) => d.id;
   y = [(d: DataRecord) => d.hoursWorked, (d: DataRecord) => d.salesMade];
 
+  value = () => {
+    throw new Error('Not allowed');
+  };
+
   readonly template = (dataRecord: DataRecord) => {
     return `${dataRecord.person}: ${dataRecord.salesMade} in ${dataRecord.hoursWorked} hour(s)`;
   };

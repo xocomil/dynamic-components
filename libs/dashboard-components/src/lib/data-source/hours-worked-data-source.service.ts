@@ -37,6 +37,7 @@ export class HoursWorkedDataSourceService implements DataSource {
     )
   );
 
+  value = (d: DataRecord) => d.y;
   x = (d: DataRecord) => d.x;
   y = (d: DataRecord) => d.y;
 

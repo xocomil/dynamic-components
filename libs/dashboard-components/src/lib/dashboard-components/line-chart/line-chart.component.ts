@@ -10,24 +10,24 @@ import { PushModule } from '@ngrx/component';
 import {
   VisAxisModule,
   VisCrosshairModule,
-  VisGroupedBarModule,
+  VisLineModule,
   VisTooltipModule,
   VisXYContainerModule,
 } from '@unovis/angular';
 import { DataSource } from '../../models/datasource';
 
 @Component({
-  selector: 'dash-bar-chart',
+  selector: 'dash-line-chart',
   standalone: true,
   imports: [
     CommonModule,
     MatCardModule,
-    VisAxisModule,
-    VisCrosshairModule,
-    VisGroupedBarModule,
-    VisTooltipModule,
     VisXYContainerModule,
     PushModule,
+    VisTooltipModule,
+    VisAxisModule,
+    VisCrosshairModule,
+    VisLineModule,
   ],
   template: `
     <mat-card>
@@ -38,29 +38,25 @@ import { DataSource } from '../../models/datasource';
       <mat-card-content>
         <vis-xy-container [data]="dataSource?.data$ | ngrxPush">
           <vis-tooltip></vis-tooltip>
-          <vis-grouped-bar
-            [x]="dataSource?.x"
-            [y]="dataSource?.y"
-          ></vis-grouped-bar>
           <vis-axis
             type="x"
             [gridLine]="true"
             [tickFormat]="dataSource?.tickFormat"
-            [numTicks]="7"
+            [numTicks]="6"
           ></vis-axis>
           <vis-axis type="y" [gridLine]="true"></vis-axis>
           <vis-crosshair [template]="dataSource?.template"></vis-crosshair>
+          <vis-line [x]="dataSource?.x" [y]="dataSource?.y"></vis-line>
         </vis-xy-container>
       </mat-card-content>
     </mat-card>
   `,
-  styleUrls: ['./bar-chart.component.scss'],
+  styleUrls: ['./line-chart.component.scss'],
   encapsulation: ViewEncapsulation.Emulated,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BarChartComponent {
-  @Input() dataSource?: DataSource;
-
-  @Input() title = 'Bar Chart';
+export class LineChartComponent {
+  @Input() title = 'Line Chart';
   @Input() subTitle?: string;
+  @Input() dataSource?: DataSource;
 }
