@@ -3,9 +3,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  OnInit,
   ViewEncapsulation,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { interval, NEVER, startWith, Subject, switchMap } from 'rxjs';
 import { BarChartComponent } from '../dashboard-components/bar-chart/bar-chart.component';
 import { DonutChartComponent } from '../dashboard-components/donut-chart/donut-chart.component';
 import { LineChartComponent } from '../dashboard-components/line-chart/line-chart.component';
@@ -22,9 +27,31 @@ import { ValueOverTimeDataSourceService } from '../data-source/value-over-time-d
     LineChartComponent,
     MatCardModule,
     DonutChartComponent,
+    MatInputModule,
+    MatSelectModule,
+    FormsModule,
   ],
   template: `
     <header>Welcome to our Dashboard!</header>
+    <div class="dashboard-control">
+      <div>
+        <mat-form-field>
+          <mat-label>Refresh</mat-label>
+          <mat-select
+            name="refresh"
+            [ngModel]="refreshIntervalSeconds"
+            (ngModelChange)="refreshIntervalSecondsChanged($event)"
+          >
+            <mat-option [value]="0">Off</mat-option>
+            <mat-option [value]="1">1 Second</mat-option>
+            <mat-option [value]="10">10 Seconds</mat-option>
+            <mat-option [value]="30">30 Seconds</mat-option>
+            <mat-option [value]="60">1 Minute</mat-option>
+            <mat-option [value]="300">5 Minutes</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
     <content>
       <dash-bar-chart
         title="Hours Worked"
@@ -57,8 +84,40 @@ import { ValueOverTimeDataSourceService } from '../data-source/value-over-time-d
     ValueOverTimeDataSourceService,
   ],
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
+  protected refreshIntervalSeconds = 10;
+  #refreshIntervalChanged$ = new Subject<number>();
+
+  #refresh$ = this.#refreshIntervalChanged$.pipe(
+    startWith(this.refreshIntervalSeconds),
+    switchMap((refreshIntervalSeconds) => {
+      if (refreshIntervalSeconds === 0) {
+        return NEVER;
+      }
+
+      return interval(refreshIntervalSeconds * 1000);
+    })
+  );
+
   protected hoursWorkedDataSource = inject(HoursWorkedDataSourceService);
   protected salesByPersonDataSource = inject(SalesByPersonDataSourceService);
   protected valueOverTimeDataSource = inject(ValueOverTimeDataSourceService);
+
+  refreshIntervalSecondsChanged(seconds: number): void {
+    console.log('seconds', seconds);
+
+    this.refreshIntervalSeconds = seconds;
+    this.#refreshIntervalChanged$.next(seconds);
+  }
+
+  ngOnInit(): void {
+    this.#refresh$.subscribe({
+      next: () => {
+        console.log('refresh!');
+      },
+      complete: () => {
+        console.log('complete!');
+      },
+    });
+  }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { faker } from '@faker-js/faker/locale/en';
 import { addDays, format } from 'date-fns';
-import { interval, of, startWith, switchMap } from 'rxjs';
+import { interval, of, shareReplay, startWith, switchMap } from 'rxjs';
 import { DataSource } from '../models/datasource';
 
 type DataRecord = {
@@ -26,7 +26,8 @@ export class ValueOverTimeDataSourceService implements DataSource {
             value: faker.datatype.float({ min: 65, max: 100, precision: 2 }),
           }))
       )
-    )
+    ),
+    shareReplay()
   );
 
   x = (d: DataRecord) => d.index;

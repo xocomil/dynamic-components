@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { faker } from '@faker-js/faker/locale/en';
-import { interval, of, switchMap } from 'rxjs';
+import { interval, of, shareReplay, startWith, switchMap } from 'rxjs';
 import { DataSource } from '../models/datasource';
 
 type DataRecord = {
@@ -13,6 +13,7 @@ type DataRecord = {
 @Injectable()
 export class SalesByPersonDataSourceService implements DataSource {
   readonly data$ = interval(3000).pipe(
+    startWith(0),
     switchMap(() =>
       of(
         Array(6)
@@ -24,7 +25,8 @@ export class SalesByPersonDataSourceService implements DataSource {
             salesMade: faker.datatype.number({ min: 0, max: 100 }),
           }))
       )
-    )
+    ),
+    shareReplay()
   );
 
   x = (d: DataRecord) => d.id;

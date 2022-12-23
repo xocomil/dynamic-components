@@ -13,6 +13,7 @@ import {
   VisSingleContainerModule,
   VisTooltipModule,
 } from '@unovis/angular';
+import { Donut } from '@unovis/ts';
 import { DataSource } from '../../models/datasource';
 
 @Component({
@@ -35,7 +36,8 @@ import { DataSource } from '../../models/datasource';
       </mat-card-header>
       <mat-card-content>
         <vis-single-container [data]="dataSource?.data$ | ngrxPush">
-          <vis-donut [arcWidth]="100" [value]="dataSource?.value"></vis-donut>
+          <vis-donut [arcWidth]="0" [value]="dataSource?.value"></vis-donut>
+          <vis-tooltip [triggers]="triggers"></vis-tooltip>
         </vis-single-container>
       </mat-card-content>
     </mat-card>
@@ -44,8 +46,14 @@ import { DataSource } from '../../models/datasource';
   encapsulation: ViewEncapsulation.Emulated,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DonutChartComponent {
+export class DonutChartComponent<T = any> {
+  protected readonly triggers = {
+    [Donut.selectors.segment]: (selector: { data: T }) => {
+      return this.dataSource?.donutLabel?.(selector);
+    },
+  };
+
   @Input() title = 'Donut Chart';
   @Input() subTitle?: string;
-  @Input() dataSource?: DataSource;
+  @Input() dataSource?: DataSource<T>;
 }
