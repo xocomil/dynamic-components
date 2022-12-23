@@ -1,7 +1,8 @@
-import { Injectable, InjectionToken } from '@angular/core';
+import { inject, Injectable, InjectionToken } from '@angular/core';
 import { faker } from '@faker-js/faker/locale/en';
-import { interval, of, shareReplay, startWith, switchMap } from 'rxjs';
+import { of, shareReplay, startWith, switchMap } from 'rxjs';
 import { DataSource } from '../models/datasource';
+import { DashboardStoreService } from '../services/dashboard-store.service';
 
 type DataRecord = {
   x: number;
@@ -24,7 +25,9 @@ export const BAR_CHART_DATASOURCE_SERVICE = new InjectionToken<DataSource>(
 
 @Injectable()
 export class HoursWorkedDataSourceService implements DataSource {
-  readonly data$ = interval(5000).pipe(
+  #dashboardStoreService = inject(DashboardStoreService);
+
+  readonly data$ = this.#dashboardStoreService.refresh$.pipe(
     startWith(0),
     switchMap(() =>
       of(

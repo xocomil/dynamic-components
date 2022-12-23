@@ -3,20 +3,20 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  OnInit,
   ViewEncapsulation,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { interval, NEVER, startWith, Subject, switchMap } from 'rxjs';
+import { PushModule } from '@ngrx/component';
 import { BarChartComponent } from '../dashboard-components/bar-chart/bar-chart.component';
 import { DonutChartComponent } from '../dashboard-components/donut-chart/donut-chart.component';
 import { LineChartComponent } from '../dashboard-components/line-chart/line-chart.component';
 import { HoursWorkedDataSourceService } from '../data-source/hours-worked-data-source.service';
 import { SalesByPersonDataSourceService } from '../data-source/sales-by-person-data-source.service';
 import { ValueOverTimeDataSourceService } from '../data-source/value-over-time-data-source.service';
+import { DashboardStoreService } from '../services/dashboard-store.service';
 
 @Component({
   selector: 'dash-dashboard',
@@ -30,6 +30,7 @@ import { ValueOverTimeDataSourceService } from '../data-source/value-over-time-d
     MatInputModule,
     MatSelectModule,
     FormsModule,
+    PushModule,
   ],
   template: `
     <header>Welcome to our Dashboard!</header>
@@ -39,7 +40,7 @@ import { ValueOverTimeDataSourceService } from '../data-source/value-over-time-d
           <mat-label>Refresh</mat-label>
           <mat-select
             name="refresh"
-            [ngModel]="refreshIntervalSeconds"
+            [ngModel]="refreshIntervalSeconds$ | ngrxPush"
             (ngModelChange)="refreshIntervalSecondsChanged($event)"
           >
             <mat-option [value]="0">Off</mat-option>
@@ -82,22 +83,13 @@ import { ValueOverTimeDataSourceService } from '../data-source/value-over-time-d
     HoursWorkedDataSourceService,
     SalesByPersonDataSourceService,
     ValueOverTimeDataSourceService,
+    DashboardStoreService,
   ],
 })
-export class DashboardComponent implements OnInit {
-  protected refreshIntervalSeconds = 10;
-  #refreshIntervalChanged$ = new Subject<number>();
-
-  #refresh$ = this.#refreshIntervalChanged$.pipe(
-    startWith(this.refreshIntervalSeconds),
-    switchMap((refreshIntervalSeconds) => {
-      if (refreshIntervalSeconds === 0) {
-        return NEVER;
-      }
-
-      return interval(refreshIntervalSeconds * 1000);
-    })
-  );
+export class DashboardComponent {
+  #dashboardStoreService = inject(DashboardStoreService);
+  protected refreshIntervalSeconds$ =
+    this.#dashboardStoreService.refreshIntervalSeconds$;
 
   protected hoursWorkedDataSource = inject(HoursWorkedDataSourceService);
   protected salesByPersonDataSource = inject(SalesByPersonDataSourceService);
@@ -106,18 +98,6 @@ export class DashboardComponent implements OnInit {
   refreshIntervalSecondsChanged(seconds: number): void {
     console.log('seconds', seconds);
 
-    this.refreshIntervalSeconds = seconds;
-    this.#refreshIntervalChanged$.next(seconds);
-  }
-
-  ngOnInit(): void {
-    this.#refresh$.subscribe({
-      next: () => {
-        console.log('refresh!');
-      },
-      complete: () => {
-        console.log('complete!');
-      },
-    });
+    this.#dashboardStoreService.refreshIntervalChange(seconds);
   }
 }

@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { faker } from '@faker-js/faker/locale/en';
-import { interval, of, shareReplay, startWith, switchMap } from 'rxjs';
+import { of, shareReplay, startWith, switchMap } from 'rxjs';
 import { DataSource } from '../models/datasource';
+import { DashboardStoreService } from '../services/dashboard-store.service';
 
 type DataRecord = {
   person: string;
@@ -12,7 +13,9 @@ type DataRecord = {
 
 @Injectable()
 export class SalesByPersonDataSourceService implements DataSource {
-  readonly data$ = interval(3000).pipe(
+  #dashboardStoreService = inject(DashboardStoreService);
+
+  readonly data$ = this.#dashboardStoreService.refresh$.pipe(
     startWith(0),
     switchMap(() =>
       of(
