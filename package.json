@@ -23,7 +23,7 @@
     "@angular/router": "15.0.3",
     "@ngrx/component": "15.0.0",
     "@ngrx/component-store": "15.0.0",
-    "@nrwl/angular": "15.3.3",
+    "@nrwl/angular": "15.4.2",
     "@unovis/angular": "^1.0.0",
     "@unovis/ts": "^1.0.0",
     "date-fns": "^2.29.3",
@@ -42,13 +42,13 @@
     "@angular/compiler-cli": "15.0.3",
     "@angular/language-service": "15.0.3",
     "@faker-js/faker": "^7.6.0",
-    "@nrwl/cli": "15.3.3",
-    "@nrwl/cypress": "15.3.3",
-    "@nrwl/eslint-plugin-nx": "15.3.3",
-    "@nrwl/jest": "15.3.3",
-    "@nrwl/linter": "15.3.3",
+    "@nrwl/cli": "15.4.2",
+    "@nrwl/cypress": "15.4.2",
+    "@nrwl/eslint-plugin-nx": "15.4.2",
+    "@nrwl/jest": "15.4.2",
+    "@nrwl/linter": "15.4.2",
     "@nrwl/nx-cloud": "15.0.2",
-    "@nrwl/workspace": "15.3.3",
+    "@nrwl/workspace": "15.4.2",
     "@types/jest": "28.1.1",
     "@types/node": "18.11.13",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
@@ -60,7 +60,7 @@
     "jest": "28.1.1",
     "jest-environment-jsdom": "28.1.1",
     "jest-preset-angular": "~12.2.3",
-    "nx": "15.3.3",
+    "nx": "15.4.2",
     "prettier": "^2.8.1",
     "ts-jest": "28.0.5",
     "ts-node": "10.9.1",
@@ -70,3 +70,4 @@
     "node": "18.12.1"
   }
 }
+
