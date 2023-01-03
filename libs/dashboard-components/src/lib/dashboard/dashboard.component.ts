@@ -6,10 +6,13 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { PushModule } from '@ngrx/component';
+import { map } from 'rxjs';
 import { BarChartComponent } from '../dashboard-components/bar-chart/bar-chart.component';
 import { DonutChartComponent } from '../dashboard-components/donut-chart/donut-chart.component';
 import { LineChartComponent } from '../dashboard-components/line-chart/line-chart.component';
@@ -31,11 +34,13 @@ import { DashboardStoreService } from '../services/dashboard-store.service';
     MatSelectModule,
     FormsModule,
     PushModule,
+    MatButtonModule,
+    MatIconModule,
   ],
   template: `
     <header>Welcome to our Dashboard!</header>
     <div class="dashboard-control">
-      <div>
+      <div class="toolbar">
         <mat-form-field>
           <mat-label>Refresh</mat-label>
           <mat-select
@@ -51,6 +56,27 @@ import { DashboardStoreService } from '../services/dashboard-store.service';
             <mat-option [value]="300">5 Minutes</mat-option>
           </mat-select>
         </mat-form-field>
+        <div class="buttons">
+          <button
+            [disabled]="disableSave$ | ngrxPush"
+            type="button"
+            mat-raised-button
+            color="primary"
+          >
+            <mat-icon fontIcon="save"></mat-icon>
+            Save
+          </button>
+          <button
+            type="button"
+            mat-raised-button
+            color="accent"
+            class="edit-button"
+            (click)="edit()"
+          >
+            <mat-icon [fontIcon]="(fontIcon$ | ngrxPush) ?? 'edit'"></mat-icon>
+            {{ editButtonText$ | ngrxPush }}
+          </button>
+        </div>
       </div>
     </div>
     <content>
@@ -90,14 +116,25 @@ export class DashboardComponent {
   #dashboardStoreService = inject(DashboardStoreService);
   protected refreshIntervalSeconds$ =
     this.#dashboardStoreService.refreshIntervalSeconds$;
+  protected fontIcon$ = this.#dashboardStoreService.editMode$.pipe(
+    map((editMode) => (editMode ? 'cancel' : 'edit'))
+  );
+  protected editButtonText$ = this.#dashboardStoreService.editMode$.pipe(
+    map((editMode) => (editMode ? 'Cancel' : 'Edit'))
+  );
+  protected disableSave$ = this.#dashboardStoreService.editMode$.pipe(
+    map((editMode) => !editMode)
+  );
 
   protected hoursWorkedDataSource = inject(HoursWorkedDataSourceService);
   protected salesByPersonDataSource = inject(SalesByPersonDataSourceService);
   protected valueOverTimeDataSource = inject(ValueOverTimeDataSourceService);
 
   refreshIntervalSecondsChanged(seconds: number): void {
-    console.log('seconds', seconds);
-
     this.#dashboardStoreService.refreshIntervalChange(seconds);
+  }
+
+  protected edit(): void {
+    this.#dashboardStoreService.toggleEditMode();
   }
 }

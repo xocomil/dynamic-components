@@ -5,6 +5,7 @@
   --padding: 0.5rem;
   --widget-size: 320px;
   --anti-padding: calc(var(--padding) * -1);
+  --button-size: 15ch;
 
   display: block;
   padding: var(--padding);
@@ -39,4 +40,27 @@ content {
 
 .just-a-div {
   border: 1px solid var(--primary-color);
+}
+
+.toolbar {
+  display: flex;
+  flex-direction: row;
+  gap: var(--padding);
+
+  > * {
+    flex-grow: 1;
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 0.25rem;
+    padding-top: var(--padding);
+
+    > button {
+      width: var(--button-size);
+      max-width: var(--button-size);
+    }
+  }
 }
