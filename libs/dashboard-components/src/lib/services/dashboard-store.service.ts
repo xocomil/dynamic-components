@@ -1,13 +1,22 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
-import { interval, NEVER, Observable, switchMap, tap } from 'rxjs';
+import {
+  interval,
+  NEVER,
+  Observable,
+  switchMap,
+  tap,
+  withLatestFrom,
+} from 'rxjs';
 
 export type DashboardState = {
   refreshIntervalSeconds: number;
+  editMode: boolean;
 };
 
 const initialState = (): DashboardState => ({
   refreshIntervalSeconds: 10,
+  editMode: false,
 });
 
 @Injectable()
@@ -25,6 +34,8 @@ export class DashboardStoreService extends ComponentStore<DashboardState> {
     })
   );
 
+  readonly editMode$ = this.select((state) => state.editMode);
+
   constructor() {
     super(initialState());
   }
@@ -34,6 +45,19 @@ export class DashboardStoreService extends ComponentStore<DashboardState> {
       tap((intervalSeconds) => this.#setRefreshIntervalSeconds(intervalSeconds))
     )
   );
+
+  toggleEditMode = this.effect((toggle$: Observable<void>) =>
+    toggle$.pipe(
+      withLatestFrom(this.editMode$),
+      tap(([, editMode]) => {
+        this.#setEditMode(!editMode);
+      })
+    )
+  );
+
+  #setEditMode(editMode: boolean) {
+    this.patchState({ editMode });
+  }
 
   #setRefreshIntervalSeconds(refreshIntervalSeconds: number) {
     this.patchState({ refreshIntervalSeconds });
