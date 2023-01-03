@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { faker } from '@faker-js/faker/locale/en';
 import { addDays, format } from 'date-fns';
-import { interval, of, startWith, switchMap } from 'rxjs';
+import { of, shareReplay, startWith, switchMap } from 'rxjs';
 import { DataSource } from '../models/datasource';
+import { DashboardStoreService } from '../services/dashboard-store.service';
 
 type DataRecord = {
   index: number;
@@ -14,7 +15,9 @@ const startDate = faker.date.recent(120);
 
 @Injectable()
 export class ValueOverTimeDataSourceService implements DataSource {
-  readonly data$ = interval(4000).pipe(
+  #dashboardStoreService = inject(DashboardStoreService);
+
+  readonly data$ = this.#dashboardStoreService.refresh$.pipe(
     startWith(0),
     switchMap(() =>
       of(
@@ -26,7 +29,8 @@ export class ValueOverTimeDataSourceService implements DataSource {
             value: faker.datatype.float({ min: 65, max: 100, precision: 2 }),
           }))
       )
-    )
+    ),
+    shareReplay()
   );
 
   x = (d: DataRecord) => d.index;

@@ -7,4 +7,5 @@ export type DataSource<T = any, X = any> = {
   value: (item: T) => number;
   template: (item: T) => string;
   tickFormat: (value: X) => string;
+  donutLabel?: (selector: { data: T }) => string;
 };

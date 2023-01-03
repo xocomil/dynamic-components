@@ -1,7 +1,8 @@
-import { Injectable, InjectionToken } from '@angular/core';
+import { inject, Injectable, InjectionToken } from '@angular/core';
 import { faker } from '@faker-js/faker/locale/en';
-import { interval, of, switchMap } from 'rxjs';
+import { of, shareReplay, startWith, switchMap } from 'rxjs';
 import { DataSource } from '../models/datasource';
+import { DashboardStoreService } from '../services/dashboard-store.service';
 
 type DataRecord = {
   x: number;
@@ -24,7 +25,10 @@ export const BAR_CHART_DATASOURCE_SERVICE = new InjectionToken<DataSource>(
 
 @Injectable()
 export class HoursWorkedDataSourceService implements DataSource {
-  readonly data$ = interval(5000).pipe(
+  #dashboardStoreService = inject(DashboardStoreService);
+
+  readonly data$ = this.#dashboardStoreService.refresh$.pipe(
+    startWith(0),
     switchMap(() =>
       of(
         Array(7)
@@ -34,7 +38,8 @@ export class HoursWorkedDataSourceService implements DataSource {
             y: faker.datatype.number({ min: 0, max: 12 }),
           }))
       )
-    )
+    ),
+    shareReplay()
   );
 
   value = (d: DataRecord) => d.y;
@@ -47,5 +52,9 @@ export class HoursWorkedDataSourceService implements DataSource {
 
   tickFormat(value: number): string {
     return dayOfWeekMap.get(value) ?? value.toString();
+  }
+
+  donutLabel(selector: { data: DataRecord }): string {
+    return `<div>${this.tickFormat(selector.data.x)}: ${selector.data.y}</div>`;
   }
 }

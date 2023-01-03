@@ -1,16 +1,22 @@
 :host {
   --primary-color: hsl(231deg 48% 48%);
+  --dashboard-control-color: hsl(231deg, 40%, 25%);
   --on-top-color: hsl(0deg 0% 100%);
   --padding: 0.5rem;
   --widget-size: 320px;
+  --anti-padding: calc(var(--padding) * -1);
 
   display: block;
   padding: var(--padding);
 }
 
-header {
-  --anti-padding: calc(var(--padding) * -1);
+.dashboard-control {
+  background-color: var(--dashboard-control-color);
+  padding: var(--padding);
+  margin: 0 var(--anti-padding);
+}
 
+header {
   background-color: var(--primary-color);
   color: var(--on-top-color);
   font-size: 2rem;
