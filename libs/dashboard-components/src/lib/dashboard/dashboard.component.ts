@@ -32,17 +32,28 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
     <header>Welcome to our Dashboard!</header>
     <dash-toolbar></dash-toolbar>
     <content>
-      <dash-widget></dash-widget>
-      <dash-bar-chart
+      <dash-widget
         title="Hours Worked"
-        subTitle="How busy were you?"
-        [dataSource]="hoursWorkedDataSource"
-      ></dash-bar-chart>
-      <dash-bar-chart
+        subTitle="How busy were your?"
+        chartType="bar"
+        dataSource="hoursWorked"
+      ></dash-widget>
+      <dash-widget
         title="Sales By Person"
-        subTitle="Who sold the most?"
-        [dataSource]="salesByPersonDataSource"
-      ></dash-bar-chart>
+        subTitle="How sold the most?"
+        chartType="bar"
+        dataSource="salesByPerson"
+      ></dash-widget>
+      <!--      <dash-bar-chart-->
+      <!--        title="Hours Worked"-->
+      <!--        subTitle="How busy were you?"-->
+      <!--        [dataSource]="hoursWorkedDataSource"-->
+      <!--      ></dash-bar-chart>-->
+      <!--      <dash-bar-chart-->
+      <!--        title="Sales By Person"-->
+      <!--        subTitle="Who sold the most?"-->
+      <!--        [dataSource]="salesByPersonDataSource"-->
+      <!--      ></dash-bar-chart>-->
       <dash-line-chart
         title="Value Over Time"
         subTitle="Watch things change"
