@@ -11,12 +11,6 @@
   padding: var(--padding);
 }
 
-.dashboard-control {
-  background-color: var(--dashboard-control-color);
-  padding: var(--padding);
-  margin: 0 var(--anti-padding);
-}
-
 header {
   background-color: var(--primary-color);
   color: var(--on-top-color);
@@ -40,27 +34,4 @@ content {
 
 .just-a-div {
   border: 1px solid var(--primary-color);
-}
-
-.toolbar {
-  display: flex;
-  flex-direction: row;
-  gap: var(--padding);
-
-  > * {
-    flex-grow: 1;
-  }
-
-  .buttons {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    gap: 0.25rem;
-    padding-top: var(--padding);
-
-    > button {
-      width: var(--button-size);
-      max-width: var(--button-size);
-    }
-  }
 }

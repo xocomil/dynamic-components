@@ -1,0 +1,12 @@
+:host {
+  display: block;
+}
+
+mat-card {
+  height: 100%;
+  width: 100%;
+
+  mat-card-actions {
+    justify-content: flex-end;
+  }
+}
