@@ -10,6 +10,7 @@ import {
   OnInit,
   Type,
   ViewChild,
+  ViewContainerRef,
   ViewEncapsulation,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -57,7 +58,9 @@ type Chart = BarChartComponent | LineChartComponent | DonutChartComponent;
       </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <div class="dynamic-container"><div dashDynamicHost></div></div>
+      <!-- <div class="dynamic-container"><div dashDynamicHost></div></div> -->
+      <!-- let's limit the amount of div we need to wrap -->
+      <ng-container #anchor></ng-container>
     </mat-card-content>
   </mat-card>`,
   styleUrls: ['./widget.component.scss'],
@@ -84,6 +87,10 @@ export class WidgetComponent implements OnInit {
 
   @ViewChild(DynamicHostDirective, { static: true })
   protected hostContainer?: DynamicHostDirective;
+
+  @ViewChild('anchor', {static: true, read: ViewContainerRef})
+  anchor!: ViewContainerRef;
+
   readonly #dashboardStoreService = inject(DashboardStoreService);
   readonly #injector = inject(Injector);
 
@@ -95,9 +102,9 @@ export class WidgetComponent implements OnInit {
     const chart = await this.#getChart();
 
     if (chart) {
-      this.hostContainer?.viewContainerRef.clear();
+      this.anchor.clear();
 
-      const component = this.hostContainer?.viewContainerRef.createComponent(
+      const component = this.anchor.createComponent(
         chart,
         {
           injector: Injector.create({
