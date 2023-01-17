@@ -125,6 +125,10 @@ export class WidgetComponent implements OnInit {
         return import('../line-chart/line-chart.component').then(
           (m) => m.LineChartComponent
         );
+      case ChartType.pie:
+        return import('../donut-chart/donut-chart.component').then(
+          (m) => m.DonutChartComponent
+        );
     }
 
     return undefined;

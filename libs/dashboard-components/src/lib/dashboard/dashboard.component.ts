@@ -50,10 +50,11 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
         chartType="line"
         dataSource="valueOverTime"
       />
-      <dash-donut-chart
-        title="Hours Worked"
+      <dash-widget
+        title="Hours worked"
         subTitle="Mmmmmmmgghgmm donuts..."
-        [dataSource]="hoursWorkedDataSource"
+        chartType="pie"
+        dataSource="hoursWorked"
       />
     </content>
   `,

@@ -2,10 +2,9 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
+  inject,
   ViewEncapsulation,
 } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
 import { PushModule } from '@ngrx/component';
 import {
   VisCrosshairModule,
@@ -14,14 +13,13 @@ import {
   VisTooltipModule,
 } from '@unovis/angular';
 import { Donut } from '@unovis/ts';
-import { DataSource } from '../../models/datasource';
+import { CHART_DATA_SOURCE } from '../widget/widget.component';
 
 @Component({
   selector: 'dash-donut-chart',
   standalone: true,
   imports: [
     CommonModule,
-    MatCardModule,
     VisSingleContainerModule,
     PushModule,
     VisDonutModule,
@@ -29,18 +27,10 @@ import { DataSource } from '../../models/datasource';
     VisCrosshairModule,
   ],
   template: `
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>{{ title }}</mat-card-title>
-        <mat-card-subtitle *ngIf="subTitle">{{ subTitle }}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <vis-single-container [data]="dataSource?.data$ | ngrxPush">
-          <vis-donut [arcWidth]="0" [value]="dataSource?.value"></vis-donut>
-          <vis-tooltip [triggers]="triggers"></vis-tooltip>
-        </vis-single-container>
-      </mat-card-content>
-    </mat-card>
+    <vis-single-container [data]="dataSource?.data$ | ngrxPush">
+      <vis-donut [arcWidth]="0" [value]="dataSource?.value" />
+      <vis-tooltip [triggers]="triggers" />
+    </vis-single-container>
   `,
   styleUrls: ['./donut-chart.component.scss'],
   encapsulation: ViewEncapsulation.Emulated,
@@ -53,7 +43,5 @@ export class DonutChartComponent<T = any> {
     },
   };
 
-  @Input() title = 'Donut Chart';
-  @Input() subTitle?: string;
-  @Input() dataSource?: DataSource<T>;
+  protected readonly dataSource = inject(CHART_DATA_SOURCE);
 }
