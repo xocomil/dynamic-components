@@ -58,8 +58,6 @@ type Chart = BarChartComponent | LineChartComponent | DonutChartComponent;
       </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <!-- <div class="dynamic-container"><div dashDynamicHost></div></div> -->
-      <!-- let's limit the amount of div we need to wrap -->
       <ng-container #anchor></ng-container>
     </mat-card-content>
   </mat-card>`,
@@ -85,10 +83,7 @@ export class WidgetComponent implements OnInit {
   @Input() dataSource?: AvailableDataSources;
   @Input() chartType: ChartType = ChartType.bar;
 
-  @ViewChild(DynamicHostDirective, { static: true })
-  protected hostContainer?: DynamicHostDirective;
-
-  @ViewChild('anchor', {static: true, read: ViewContainerRef})
+  @ViewChild('anchor', { static: true, read: ViewContainerRef })
   anchor!: ViewContainerRef;
 
   readonly #dashboardStoreService = inject(DashboardStoreService);
@@ -104,20 +99,17 @@ export class WidgetComponent implements OnInit {
     if (chart) {
       this.anchor.clear();
 
-      const component = this.anchor.createComponent(
-        chart,
-        {
-          injector: Injector.create({
-            providers: [
-              {
-                provide: CHART_DATA_SOURCE,
-                useFactory: () => new HoursWorkedDataSourceService(),
-              },
-            ],
-            parent: this.#injector,
-          }),
-        }
-      );
+      const component = this.anchor.createComponent(chart, {
+        injector: Injector.create({
+          providers: [
+            {
+              provide: CHART_DATA_SOURCE,
+              useFactory: () => new HoursWorkedDataSourceService(),
+            },
+          ],
+          parent: this.#injector,
+        }),
+      });
 
       component?.changeDetectorRef.detectChanges();
     }
