@@ -27,8 +27,8 @@ import { CHART_DATA_SOURCE } from '../widget/widget.component';
     VisCrosshairModule,
   ],
   template: `
-    <vis-single-container [data]="dataSource?.data$ | ngrxPush">
-      <vis-donut [arcWidth]="0" [value]="dataSource?.value" />
+    <vis-single-container [data]="dataSource.data$ | ngrxPush">
+      <vis-donut [arcWidth]="0" [value]="dataSource.value" />
       <vis-tooltip [triggers]="triggers" />
     </vis-single-container>
   `,
