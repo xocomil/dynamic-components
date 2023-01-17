@@ -8,7 +8,6 @@ import {
   Injector,
   Input,
   OnInit,
-  Type,
   ViewChild,
   ViewContainerRef,
   ViewEncapsulation,
@@ -22,12 +21,8 @@ import { AvailableDataSources } from '../../models/available-datasources.model';
 import { ChartType } from '../../models/chart-type.model';
 import { DataSource } from '../../models/datasource';
 import { DashboardStoreService } from '../../services/dashboard-store.service';
-import { BarChartComponent } from '../bar-chart/bar-chart.component';
-import { DonutChartComponent } from '../donut-chart/donut-chart.component';
-import { LineChartComponent } from '../line-chart/line-chart.component';
+import { getChart } from '../../services/get-component';
 import { DynamicHostDirective } from './dynamic-host.directive';
-
-type Chart = BarChartComponent | LineChartComponent | DonutChartComponent;
 
 @Component({
   selector: 'dash-widget',
@@ -94,7 +89,7 @@ export class WidgetComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     if (!this.dataSource) return;
 
-    const chart = await this.#getChart();
+    const chart = await getChart(this.chartType);
 
     if (chart) {
       this.anchor.clear();
@@ -113,25 +108,6 @@ export class WidgetComponent implements OnInit {
 
       component?.changeDetectorRef.detectChanges();
     }
-  }
-
-  #getChart(): Promise<Type<Chart>> | undefined {
-    switch (this.chartType) {
-      case ChartType.bar:
-        return import('../bar-chart/bar-chart.component').then(
-          (m) => m.BarChartComponent
-        );
-      case ChartType.line:
-        return import('../line-chart/line-chart.component').then(
-          (m) => m.LineChartComponent
-        );
-      case ChartType.pie:
-        return import('../donut-chart/donut-chart.component').then(
-          (m) => m.DonutChartComponent
-        );
-    }
-
-    return undefined;
   }
 }
 
