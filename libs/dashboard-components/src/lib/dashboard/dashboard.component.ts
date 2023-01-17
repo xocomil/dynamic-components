@@ -30,40 +30,31 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
   ],
   template: `
     <header>Welcome to our Dashboard!</header>
-    <dash-toolbar></dash-toolbar>
+    <dash-toolbar />
     <content>
       <dash-widget
         title="Hours Worked"
         subTitle="How busy were your?"
         chartType="bar"
         dataSource="hoursWorked"
-      ></dash-widget>
+      />
       <dash-widget
         title="Sales By Person"
         subTitle="How sold the most?"
         chartType="bar"
         dataSource="salesByPerson"
-      ></dash-widget>
-      <!--      <dash-bar-chart-->
-      <!--        title="Hours Worked"-->
-      <!--        subTitle="How busy were you?"-->
-      <!--        [dataSource]="hoursWorkedDataSource"-->
-      <!--      ></dash-bar-chart>-->
-      <!--      <dash-bar-chart-->
-      <!--        title="Sales By Person"-->
-      <!--        subTitle="Who sold the most?"-->
-      <!--        [dataSource]="salesByPersonDataSource"-->
-      <!--      ></dash-bar-chart>-->
-      <dash-line-chart
+      />
+      <dash-widget
         title="Value Over Time"
         subTitle="Watch things change"
-        [dataSource]="valueOverTimeDataSource"
-      ></dash-line-chart>
+        chartType="line"
+        dataSource="valueOverTime"
+      />
       <dash-donut-chart
         title="Hours Worked"
         subTitle="Mmmmmmmgghgmm donuts..."
         [dataSource]="hoursWorkedDataSource"
-      ></dash-donut-chart>
+      />
     </content>
   `,
   styleUrls: ['./dashboard.component.scss'],
