@@ -4,7 +4,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  InjectionToken,
   Injector,
   Input,
   OnInit,
@@ -16,10 +15,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { PushModule } from '@ngrx/component';
-import { HoursWorkedDataSourceService } from '../../data-source/hours-worked-data-source.service';
 import { AvailableDataSources } from '../../models/available-datasources.model';
 import { ChartType } from '../../models/chart-type.model';
-import { DataSource } from '../../models/datasource';
+import { DashboardDataSourceService } from '../../services/dashboard-data-source.service';
 import { DashboardStoreService } from '../../services/dashboard-store.service';
 import { getChart } from '../../services/get-component';
 import { DynamicHostDirective } from './dynamic-host.directive';
@@ -83,6 +81,7 @@ export class WidgetComponent implements OnInit {
 
   readonly #dashboardStoreService = inject(DashboardStoreService);
   readonly #injector = inject(Injector);
+  readonly #dashboardDataService = inject(DashboardDataSourceService);
 
   protected readonly editMode$ = this.#dashboardStoreService.editMode$;
 
@@ -96,12 +95,7 @@ export class WidgetComponent implements OnInit {
 
       const component = this.anchor.createComponent(chart, {
         injector: Injector.create({
-          providers: [
-            {
-              provide: CHART_DATA_SOURCE,
-              useFactory: () => new HoursWorkedDataSourceService(),
-            },
-          ],
+          providers: [this.#dashboardDataService.getProvider(this.dataSource)],
           parent: this.#injector,
         }),
       });
@@ -110,7 +104,3 @@ export class WidgetComponent implements OnInit {
     }
   }
 }
-
-export const CHART_DATA_SOURCE = new InjectionToken<DataSource>(
-  'ChartDataSource'
-);

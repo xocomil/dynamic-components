@@ -13,7 +13,7 @@ import {
   VisTooltipModule,
 } from '@unovis/angular';
 import { Donut } from '@unovis/ts';
-import { CHART_DATA_SOURCE } from '../widget/widget.component';
+import { CHART_DATA_SOURCE } from '../../services/dashboard-data-source.service';
 
 @Component({
   selector: 'dash-donut-chart',

@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  inject,
   ViewEncapsulation,
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
@@ -13,6 +12,7 @@ import { WidgetComponent } from '../dashboard-components/widget/widget.component
 import { HoursWorkedDataSourceService } from '../data-source/hours-worked-data-source.service';
 import { SalesByPersonDataSourceService } from '../data-source/sales-by-person-data-source.service';
 import { ValueOverTimeDataSourceService } from '../data-source/value-over-time-data-source.service';
+import { DashboardDataSourceService } from '../services/dashboard-data-source.service';
 import { DashboardStoreService } from '../services/dashboard-store.service';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 
@@ -63,13 +63,10 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     DashboardStoreService,
+    DashboardDataSourceService,
     HoursWorkedDataSourceService,
     SalesByPersonDataSourceService,
     ValueOverTimeDataSourceService,
   ],
 })
-export class DashboardComponent {
-  protected hoursWorkedDataSource = inject(HoursWorkedDataSourceService);
-  protected salesByPersonDataSource = inject(SalesByPersonDataSourceService);
-  protected valueOverTimeDataSource = inject(ValueOverTimeDataSourceService);
-}
+export class DashboardComponent {}

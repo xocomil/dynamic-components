@@ -13,7 +13,7 @@ import {
   VisTooltipModule,
   VisXYContainerModule,
 } from '@unovis/angular';
-import { CHART_DATA_SOURCE } from '../widget/widget.component';
+import { CHART_DATA_SOURCE } from '../../services/dashboard-data-source.service';
 
 @Component({
   selector: 'dash-bar-chart',
