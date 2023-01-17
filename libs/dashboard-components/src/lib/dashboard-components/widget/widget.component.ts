@@ -43,10 +43,10 @@ type Chart = BarChartComponent | LineChartComponent | DonutChartComponent;
   template: ` <mat-card>
     <mat-card-actions *ngIf="editMode$ | ngrxPush" [@buttonFade]>
       <button mat-icon-button [@buttonFade]>
-        <mat-icon fontIcon="edit"></mat-icon>
+        <mat-icon fontIcon="edit" />
       </button>
       <button mat-icon-button [@buttonFade]>
-        <mat-icon fontIcon="delete"></mat-icon>
+        <mat-icon fontIcon="delete" />
       </button>
     </mat-card-actions>
     <mat-card-header>
@@ -58,7 +58,7 @@ type Chart = BarChartComponent | LineChartComponent | DonutChartComponent;
       </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <ng-container #anchor></ng-container>
+      <ng-container #anchor />
     </mat-card-content>
   </mat-card>`,
   styleUrls: ['./widget.component.scss'],
@@ -120,6 +120,10 @@ export class WidgetComponent implements OnInit {
       case ChartType.bar:
         return import('../bar-chart/bar-chart.component').then(
           (m) => m.BarChartComponent
+        );
+      case ChartType.line:
+        return import('../line-chart/line-chart.component').then(
+          (m) => m.LineChartComponent
         );
     }
 
