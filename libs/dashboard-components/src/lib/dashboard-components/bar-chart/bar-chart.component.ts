@@ -29,16 +29,16 @@ import { CHART_DATA_SOURCE } from '../widget/widget.component';
   ],
   template: `
     <vis-xy-container [data]="dataSource.data$ | ngrxPush">
-      <vis-tooltip></vis-tooltip>
-      <vis-grouped-bar [x]="dataSource.x" [y]="dataSource.y"></vis-grouped-bar>
+      <vis-tooltip />
+      <vis-grouped-bar [x]="dataSource.x" [y]="dataSource.y" />
       <vis-axis
         type="x"
         [gridLine]="true"
         [tickFormat]="dataSource.tickFormat"
         [numTicks]="7"
-      ></vis-axis>
-      <vis-axis type="y" [gridLine]="true"></vis-axis>
-      <vis-crosshair [template]="dataSource.template"></vis-crosshair>
+      />
+      <vis-axis type="y" [gridLine]="true" />
+      <vis-crosshair [template]="dataSource.template" />
     </vis-xy-container>
   `,
   styleUrls: ['./bar-chart.component.scss'],
@@ -47,8 +47,4 @@ import { CHART_DATA_SOURCE } from '../widget/widget.component';
 })
 export class BarChartComponent {
   protected readonly dataSource = inject(CHART_DATA_SOURCE);
-
-  constructor() {
-    console.log('dataSource:', this.dataSource);
-  }
 }
