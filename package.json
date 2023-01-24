@@ -24,6 +24,8 @@
     "@ngrx/component": "15.1.0",
     "@ngrx/component-store": "15.1.0",
     "@nrwl/angular": "15.6.0",
+    "@rx-angular/cdk": "latest",
+    "@rx-angular/template": "^1.0.0-rc.5",
     "@unovis/angular": "^1.0.2",
     "@unovis/ts": "^1.0.2",
     "date-fns": "^2.29.3",
@@ -70,4 +72,3 @@
     "node": "18.12.1"
   }
 }
-
