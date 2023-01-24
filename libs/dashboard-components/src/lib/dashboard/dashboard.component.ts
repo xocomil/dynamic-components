@@ -35,13 +35,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
     <header>Welcome to our Dashboard!</header>
     <dash-toolbar />
     <content>
-      <dash-widget
-        *rxFor="let widget of widgets$"
-        [title]="widget.title"
-        [subTitle]="widget.subTitle"
-        [chartType]="widget.chartType"
-        [dataSource]="widget.dataSource"
-      />
+      <dash-widget *rxFor="let widget of widgets$" [widgetId]="widget.id" />
     </content>
   `,
   styleUrls: ['./dashboard.component.scss'],
