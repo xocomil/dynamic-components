@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  inject,
   ViewEncapsulation,
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
@@ -13,6 +12,7 @@ import { WidgetComponent } from '../dashboard-components/widget/widget.component
 import { HoursWorkedDataSourceService } from '../data-source/hours-worked-data-source.service';
 import { SalesByPersonDataSourceService } from '../data-source/sales-by-person-data-source.service';
 import { ValueOverTimeDataSourceService } from '../data-source/value-over-time-data-source.service';
+import { DashboardDataSourceService } from '../services/dashboard-data-source.service';
 import { DashboardStoreService } from '../services/dashboard-store.service';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 
@@ -30,40 +30,32 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
   ],
   template: `
     <header>Welcome to our Dashboard!</header>
-    <dash-toolbar></dash-toolbar>
+    <dash-toolbar />
     <content>
       <dash-widget
         title="Hours Worked"
         subTitle="How busy were your?"
         chartType="bar"
         dataSource="hoursWorked"
-      ></dash-widget>
+      />
       <dash-widget
         title="Sales By Person"
         subTitle="How sold the most?"
         chartType="bar"
         dataSource="salesByPerson"
-      ></dash-widget>
-      <!--      <dash-bar-chart-->
-      <!--        title="Hours Worked"-->
-      <!--        subTitle="How busy were you?"-->
-      <!--        [dataSource]="hoursWorkedDataSource"-->
-      <!--      ></dash-bar-chart>-->
-      <!--      <dash-bar-chart-->
-      <!--        title="Sales By Person"-->
-      <!--        subTitle="Who sold the most?"-->
-      <!--        [dataSource]="salesByPersonDataSource"-->
-      <!--      ></dash-bar-chart>-->
-      <dash-line-chart
+      />
+      <dash-widget
         title="Value Over Time"
         subTitle="Watch things change"
-        [dataSource]="valueOverTimeDataSource"
-      ></dash-line-chart>
-      <dash-donut-chart
-        title="Hours Worked"
+        chartType="line"
+        dataSource="valueOverTime"
+      />
+      <dash-widget
+        title="Hours worked"
         subTitle="Mmmmmmmgghgmm donuts..."
-        [dataSource]="hoursWorkedDataSource"
-      ></dash-donut-chart>
+        chartType="pie"
+        dataSource="hoursWorked"
+      />
     </content>
   `,
   styleUrls: ['./dashboard.component.scss'],
@@ -71,13 +63,10 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     DashboardStoreService,
+    DashboardDataSourceService,
     HoursWorkedDataSourceService,
     SalesByPersonDataSourceService,
     ValueOverTimeDataSourceService,
   ],
 })
-export class DashboardComponent {
-  protected hoursWorkedDataSource = inject(HoursWorkedDataSourceService);
-  protected salesByPersonDataSource = inject(SalesByPersonDataSourceService);
-  protected valueOverTimeDataSource = inject(ValueOverTimeDataSourceService);
-}
+export class DashboardComponent {}

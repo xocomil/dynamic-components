@@ -4,11 +4,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  InjectionToken,
   Injector,
   Input,
   OnInit,
-  Type,
   ViewChild,
   ViewContainerRef,
   ViewEncapsulation,
@@ -17,17 +15,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { PushModule } from '@ngrx/component';
-import { HoursWorkedDataSourceService } from '../../data-source/hours-worked-data-source.service';
 import { AvailableDataSources } from '../../models/available-datasources.model';
 import { ChartType } from '../../models/chart-type.model';
-import { DataSource } from '../../models/datasource';
+import { DashboardDataSourceService } from '../../services/dashboard-data-source.service';
 import { DashboardStoreService } from '../../services/dashboard-store.service';
-import { BarChartComponent } from '../bar-chart/bar-chart.component';
-import { DonutChartComponent } from '../donut-chart/donut-chart.component';
-import { LineChartComponent } from '../line-chart/line-chart.component';
+import { getChart } from '../../services/get-component';
 import { DynamicHostDirective } from './dynamic-host.directive';
-
-type Chart = BarChartComponent | LineChartComponent | DonutChartComponent;
 
 @Component({
   selector: 'dash-widget',
@@ -43,10 +36,10 @@ type Chart = BarChartComponent | LineChartComponent | DonutChartComponent;
   template: ` <mat-card>
     <mat-card-actions *ngIf="editMode$ | ngrxPush" [@buttonFade]>
       <button mat-icon-button [@buttonFade]>
-        <mat-icon fontIcon="edit"></mat-icon>
+        <mat-icon fontIcon="edit" />
       </button>
       <button mat-icon-button [@buttonFade]>
-        <mat-icon fontIcon="delete"></mat-icon>
+        <mat-icon fontIcon="delete" />
       </button>
     </mat-card-actions>
     <mat-card-header>
@@ -58,7 +51,7 @@ type Chart = BarChartComponent | LineChartComponent | DonutChartComponent;
       </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <ng-container #anchor></ng-container>
+      <ng-container #anchor />
     </mat-card-content>
   </mat-card>`,
   styleUrls: ['./widget.component.scss'],
@@ -88,25 +81,21 @@ export class WidgetComponent implements OnInit {
 
   readonly #dashboardStoreService = inject(DashboardStoreService);
   readonly #injector = inject(Injector);
+  readonly #dashboardDataService = inject(DashboardDataSourceService);
 
   protected readonly editMode$ = this.#dashboardStoreService.editMode$;
 
   async ngOnInit(): Promise<void> {
     if (!this.dataSource) return;
 
-    const chart = await this.#getChart();
+    const chart = await getChart(this.chartType);
 
     if (chart) {
       this.anchor.clear();
 
       const component = this.anchor.createComponent(chart, {
         injector: Injector.create({
-          providers: [
-            {
-              provide: CHART_DATA_SOURCE,
-              useFactory: () => new HoursWorkedDataSourceService(),
-            },
-          ],
+          providers: [this.#dashboardDataService.getProvider(this.dataSource)],
           parent: this.#injector,
         }),
       });
@@ -114,19 +103,4 @@ export class WidgetComponent implements OnInit {
       component?.changeDetectorRef.detectChanges();
     }
   }
-
-  #getChart(): Promise<Type<Chart>> | undefined {
-    switch (this.chartType) {
-      case ChartType.bar:
-        return import('../bar-chart/bar-chart.component').then(
-          (m) => m.BarChartComponent
-        );
-    }
-
-    return undefined;
-  }
 }
-
-export const CHART_DATA_SOURCE = new InjectionToken<DataSource>(
-  'ChartDataSource'
-);
