@@ -2,9 +2,11 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   ViewEncapsulation,
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
+import { ForModule } from '@rx-angular/template/for';
 import { BarChartComponent } from '../dashboard-components/bar-chart/bar-chart.component';
 import { DonutChartComponent } from '../dashboard-components/donut-chart/donut-chart.component';
 import { LineChartComponent } from '../dashboard-components/line-chart/line-chart.component';
@@ -27,35 +29,13 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
     DonutChartComponent,
     ToolbarComponent,
     WidgetComponent,
+    ForModule,
   ],
   template: `
     <header>Welcome to our Dashboard!</header>
     <dash-toolbar />
     <content>
-      <dash-widget
-        title="Hours Worked"
-        subTitle="How busy were your?"
-        chartType="bar"
-        dataSource="hoursWorked"
-      />
-      <dash-widget
-        title="Sales By Person"
-        subTitle="How sold the most?"
-        chartType="bar"
-        dataSource="salesByPerson"
-      />
-      <dash-widget
-        title="Value Over Time"
-        subTitle="Watch things change"
-        chartType="line"
-        dataSource="valueOverTime"
-      />
-      <dash-widget
-        title="Hours worked"
-        subTitle="Mmmmmmmgghgmm donuts..."
-        chartType="pie"
-        dataSource="hoursWorked"
-      />
+      <dash-widget *rxFor="let widget of widgets$" [widgetId]="widget.id" />
     </content>
   `,
   styleUrls: ['./dashboard.component.scss'],
@@ -69,4 +49,8 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
     ValueOverTimeDataSourceService,
   ],
 })
-export class DashboardComponent {}
+export class DashboardComponent {
+  #dashboardStore = inject(DashboardStoreService);
+
+  protected readonly widgets$ = this.#dashboardStore.widgets$;
+}

@@ -6,7 +6,6 @@ import {
   inject,
   Injector,
   Input,
-  OnInit,
   ViewChild,
   ViewContainerRef,
   ViewEncapsulation,
@@ -14,9 +13,9 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { PushModule } from '@ngrx/component';
-import { AvailableDataSources } from '../../models/available-datasources.model';
-import { ChartType } from '../../models/chart-type.model';
+import { LetModule, PushModule } from '@ngrx/component';
+import { BehaviorSubject, filter, switchMap, tap } from 'rxjs';
+import { DashboardWidget } from '../../models/dashboard-widget';
 import { DashboardDataSourceService } from '../../services/dashboard-data-source.service';
 import { DashboardStoreService } from '../../services/dashboard-store.service';
 import { getChart } from '../../services/get-component';
@@ -27,27 +26,25 @@ import { DynamicHostDirective } from './dynamic-host.directive';
   standalone: true,
   imports: [
     CommonModule,
+    DynamicHostDirective,
     MatButtonModule,
     MatCardModule,
     MatIconModule,
     PushModule,
-    DynamicHostDirective,
+    LetModule,
   ],
   template: ` <mat-card>
     <mat-card-actions *ngIf="editMode$ | ngrxPush" [@buttonFade]>
-      <button mat-icon-button [@buttonFade]>
-        <mat-icon fontIcon="edit" />
-      </button>
-      <button mat-icon-button [@buttonFade]>
+      <button mat-icon-button [@buttonFade] (click)="deleteWidget()">
         <mat-icon fontIcon="delete" />
       </button>
     </mat-card-actions>
-    <mat-card-header>
+    <mat-card-header *ngrxLet="widget$ as widget">
       <mat-card-title>
-        {{ title }}
+        {{ widget?.title }}
       </mat-card-title>
-      <mat-card-subtitle *ngIf="subTitle">
-        {{ subTitle }}
+      <mat-card-subtitle *ngIf="widget?.subTitle">
+        {{ widget?.subTitle }}
       </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
@@ -70,11 +67,31 @@ import { DynamicHostDirective } from './dynamic-host.directive';
     ]),
   ],
 })
-export class WidgetComponent implements OnInit {
-  @Input() title = 'My Widget';
-  @Input() subTitle?: string;
-  @Input() dataSource?: AvailableDataSources;
-  @Input() chartType: ChartType = ChartType.bar;
+export class WidgetComponent {
+  #widgetId?: string;
+  @Input() get widgetId(): string | undefined {
+    return this.#widgetId;
+  }
+  set widgetId(widgetId: string | undefined) {
+    this.#widgetId = widgetId;
+
+    this.#widgetId$.next(widgetId);
+  }
+
+  #widgetId$ = new BehaviorSubject<string | undefined>(undefined);
+
+  protected widget$ = this.#widgetId$.pipe(
+    filter(Boolean),
+    switchMap((widgetId) => {
+      console.log('widgetId', widgetId);
+
+      return this.#dashboardStoreService.getWidgetFromId(widgetId);
+    }),
+    tap((widget) => {
+      void this.#loadWidgetData(widget);
+    })
+    // shareReplay(1)
+  );
 
   @ViewChild('anchor', { static: true, read: ViewContainerRef })
   anchor!: ViewContainerRef;
@@ -85,22 +102,28 @@ export class WidgetComponent implements OnInit {
 
   protected readonly editMode$ = this.#dashboardStoreService.editMode$;
 
-  async ngOnInit(): Promise<void> {
-    if (!this.dataSource) return;
+  async #loadWidgetData(widget: DashboardWidget | undefined) {
+    if (!widget?.dataSource) return;
 
-    const chart = await getChart(this.chartType);
+    const chart = await getChart(widget.chartType);
 
     if (chart) {
       this.anchor.clear();
 
       const component = this.anchor.createComponent(chart, {
         injector: Injector.create({
-          providers: [this.#dashboardDataService.getProvider(this.dataSource)],
+          providers: [
+            this.#dashboardDataService.getProvider(widget.dataSource),
+          ],
           parent: this.#injector,
         }),
       });
 
       component?.changeDetectorRef.detectChanges();
     }
+  }
+
+  protected deleteWidget() {
+    console.log(`I don't know what to delete!`);
   }
 }
