@@ -7,27 +7,28 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { LetModule, PushModule } from '@ngrx/component';
+import { MatInputModule } from '@angular/material/input';
+import { LetModule } from '@ngrx/component';
 import { BehaviorSubject, filter, switchMap, tap } from 'rxjs';
 import { DashboardWidget } from '../../models/dashboard-widget';
 import { DashboardDataSourceService } from '../../services/dashboard-data-source.service';
 import { DashboardStoreService } from '../../services/dashboard-store.service';
 import { getChart } from '../../services/get-component';
-import { DynamicHostDirective } from '../widget/dynamic-host.directive';
 
 @Component({
   selector: 'dash-edit-widget',
   standalone: true,
   imports: [
     CommonModule,
-    DynamicHostDirective,
+    FormsModule,
     MatButtonModule,
     MatCardModule,
     MatIconModule,
-    PushModule,
+    MatInputModule,
     LetModule,
   ],
   template: ` <mat-card>
@@ -39,14 +40,16 @@ import { DynamicHostDirective } from '../widget/dynamic-host.directive';
           </button>
         </div>
         <div class="title-input">
-          <mat-card-title>
-            {{ widget?.title }}
-          </mat-card-title>
+          <mat-form-field>
+            <label>Title</label>
+            <input matInput [ngModel]="widget?.title" />
+          </mat-form-field>
         </div>
         <div class="sub-title-input">
-          <mat-card-subtitle *ngIf="widget?.subTitle">
-            {{ widget?.subTitle }}
-          </mat-card-subtitle>
+          <mat-form-field>
+            <label>Subtitle</label>
+            <input matInput [ngModel]="widget?.subTitle" />
+          </mat-form-field>
         </div>
         <div class="data-source-input"></div>
       </div>

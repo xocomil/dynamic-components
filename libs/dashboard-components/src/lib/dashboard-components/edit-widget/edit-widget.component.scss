@@ -17,7 +17,7 @@
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 4em;
-  grid-template-rows: repeat(3, 2em);
+  grid-template-rows: repeat(3, min-content);
   gap: 0.5em;
   grid-auto-flow: row;
   grid-template-areas:
