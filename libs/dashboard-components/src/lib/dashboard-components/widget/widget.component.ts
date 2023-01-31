@@ -124,6 +124,8 @@ export class WidgetComponent {
   }
 
   protected deleteWidget() {
-    console.log(`I don't know what to delete!`);
+    if (this.#widgetId) {
+      this.#dashboardStoreService.deleteWidgetById({ id: this.#widgetId });
+    }
   }
 }
