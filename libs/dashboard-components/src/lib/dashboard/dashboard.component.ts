@@ -6,6 +6,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
+import { PushModule } from '@ngrx/component';
 import { ForModule } from '@rx-angular/template/for';
 import { BarChartComponent } from '../dashboard-components/bar-chart/bar-chart.component';
 import { DonutChartComponent } from '../dashboard-components/donut-chart/donut-chart.component';
@@ -16,6 +17,7 @@ import { SalesByPersonDataSourceService } from '../data-source/sales-by-person-d
 import { ValueOverTimeDataSourceService } from '../data-source/value-over-time-data-source.service';
 import { DashboardDataSourceService } from '../services/dashboard-data-source.service';
 import { DashboardStoreService } from '../services/dashboard-store.service';
+import { EditWidgetComponent } from './../dashboard-components/edit-widget/edit-widget.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 
 @Component({
@@ -24,19 +26,30 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
   imports: [
     BarChartComponent,
     CommonModule,
+    DonutChartComponent,
+    EditWidgetComponent,
+    ForModule,
     LineChartComponent,
     MatCardModule,
-    DonutChartComponent,
+    PushModule,
     ToolbarComponent,
     WidgetComponent,
-    ForModule,
   ],
   template: `
     <header>Welcome to our Dashboard!</header>
     <dash-toolbar />
     <content>
-      <dash-widget *rxFor="let widget of widgets$" [widgetId]="widget.id" />
+      <ng-container *ngIf="!(editMode$ | ngrxPush); else editMode">
+        <dash-widget *rxFor="let widget of widgets$" [widgetId]="widget.id" />
+      </ng-container>
     </content>
+
+    <ng-template #editMode>
+      <dash-edit-widget
+        *rxFor="let widget of widgets$"
+        [widgetId]="widget.id"
+      />
+    </ng-template>
   `,
   styleUrls: ['./dashboard.component.scss'],
   encapsulation: ViewEncapsulation.Emulated,
@@ -53,4 +66,5 @@ export class DashboardComponent {
   #dashboardStore = inject(DashboardStoreService);
 
   protected readonly widgets$ = this.#dashboardStore.widgets$;
+  protected readonly editMode$ = this.#dashboardStore.editMode$;
 }
