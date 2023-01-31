@@ -1,4 +1,3 @@
-import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -10,35 +9,19 @@ import {
   ViewContainerRef,
   ViewEncapsulation,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { LetModule, PushModule } from '@ngrx/component';
+import { LetModule } from '@ngrx/component';
 import { BehaviorSubject, filter, switchMap, tap } from 'rxjs';
 import { DashboardWidget } from '../../models/dashboard-widget';
 import { DashboardDataSourceService } from '../../services/dashboard-data-source.service';
 import { DashboardStoreService } from '../../services/dashboard-store.service';
 import { getChart } from '../../services/get-component';
-import { DynamicHostDirective } from './dynamic-host.directive';
 
 @Component({
   selector: 'dash-widget',
   standalone: true,
-  imports: [
-    CommonModule,
-    DynamicHostDirective,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    PushModule,
-    LetModule,
-  ],
+  imports: [CommonModule, MatCardModule, LetModule],
   template: ` <mat-card>
-    <mat-card-actions *ngIf="editMode$ | ngrxPush" [@buttonFade]>
-      <button mat-icon-button [@buttonFade] (click)="deleteWidget()">
-        <mat-icon fontIcon="delete" />
-      </button>
-    </mat-card-actions>
     <mat-card-header *ngrxLet="widget$ as widget">
       <mat-card-title>
         {{ widget?.title }}
@@ -54,18 +37,6 @@ import { DynamicHostDirective } from './dynamic-host.directive';
   styleUrls: ['./widget.component.scss'],
   encapsulation: ViewEncapsulation.Emulated,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('buttonFade', [
-      transition(':enter', [
-        style({ opacity: 0, height: 0 }),
-        animate('300ms ease', style({ height: '*' })),
-        animate('300ms ease', style({ opacity: 1 })),
-      ]),
-      transition(':leave', [
-        animate('150ms ease', style({ height: 0, opacity: 0 })),
-      ]),
-    ]),
-  ],
 })
 export class WidgetComponent {
   #widgetId?: string;
@@ -100,8 +71,6 @@ export class WidgetComponent {
   readonly #injector = inject(Injector);
   readonly #dashboardDataService = inject(DashboardDataSourceService);
 
-  protected readonly editMode$ = this.#dashboardStoreService.editMode$;
-
   async #loadWidgetData(widget: DashboardWidget | undefined) {
     if (!widget?.dataSource) return;
 
@@ -120,12 +89,6 @@ export class WidgetComponent {
       });
 
       component?.changeDetectorRef.detectChanges();
-    }
-  }
-
-  protected deleteWidget() {
-    if (this.#widgetId) {
-      this.#dashboardStoreService.deleteWidgetById({ id: this.#widgetId });
     }
   }
 }
