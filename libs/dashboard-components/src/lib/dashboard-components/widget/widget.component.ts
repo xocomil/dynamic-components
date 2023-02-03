@@ -54,14 +54,11 @@ export class WidgetComponent {
   protected widget$ = this.#widgetId$.pipe(
     filter(Boolean),
     switchMap((widgetId) => {
-      console.log('widgetId', widgetId);
-
       return this.#dashboardStoreService.getWidgetFromId(widgetId);
     }),
     tap((widget) => {
       void this.#loadWidgetData(widget);
     })
-    // shareReplay(1)
   );
 
   @ViewChild('anchor', { static: true, read: ViewContainerRef })
