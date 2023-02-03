@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
+import { create } from 'mutative';
 import {
   interval,
   NEVER,
@@ -16,6 +17,7 @@ export type DashboardState = {
   refreshIntervalSeconds: number;
   editMode: boolean;
   widgets: DashboardWidget[];
+  oldWidgets: DashboardWidget[];
 };
 
 const initialState = (): DashboardState => ({
@@ -51,6 +53,7 @@ const initialState = (): DashboardState => ({
       dataSource: AvailableDataSources.hoursWorked,
     },
   ],
+  oldWidgets: [],
 });
 
 @Injectable()
@@ -72,6 +75,8 @@ export class DashboardStoreService extends ComponentStore<DashboardState> {
 
   readonly widgets$ = this.select((state) => state.widgets);
 
+  readonly #oldWidgets$ = this.select((state) => state.oldWidgets);
+
   constructor() {
     super(initialState());
   }
@@ -84,12 +89,41 @@ export class DashboardStoreService extends ComponentStore<DashboardState> {
 
   toggleEditMode = this.effect((toggle$: Observable<void>) =>
     toggle$.pipe(
-      withLatestFrom(this.editMode$),
-      tap(([, editMode]) => {
+      withLatestFrom(this.editMode$, this.widgets$, this.#oldWidgets$),
+      tap(([, editMode, widgets, oldWidgets]) => {
         this.#setEditMode(!editMode);
+
+        if (!editMode) {
+          this.#setOldWidgets(widgets);
+        } else {
+          this.#setOldWidgets([]);
+          this.#setWidgets(oldWidgets);
+        }
       })
     )
   );
+
+  readonly save = this.effect((save$: Observable<void>) =>
+    save$.pipe(
+      tap(() => {
+        this.#setEditMode(false);
+      })
+    )
+  );
+
+  readonly deleteWidgetById = this.updater((state, { id }: { id: string }) => {
+    return create(state, (draft) => {
+      draft.widgets = draft.widgets.filter((widget) => widget.id !== id);
+    });
+  });
+
+  #setOldWidgets(oldWidgets: DashboardWidget[]): void {
+    this.patchState({ oldWidgets });
+  }
+
+  #setWidgets(widgets: DashboardWidget[]): void {
+    this.patchState({ widgets });
+  }
 
   #setEditMode(editMode: boolean) {
     this.patchState({ editMode });

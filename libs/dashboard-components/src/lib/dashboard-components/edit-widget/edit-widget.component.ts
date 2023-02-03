@@ -1,15 +1,17 @@
 import { CommonModule } from '@angular/common';
 import {
-  ChangeDetectionStrategy,
   Component,
   inject,
   Injector,
   Input,
   ViewChild,
   ViewContainerRef,
-  ViewEncapsulation,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { LetModule } from '@ngrx/component';
 import { BehaviorSubject, filter, switchMap, tap } from 'rxjs';
 import { DashboardWidget } from '../../models/dashboard-widget';
@@ -18,27 +20,47 @@ import { DashboardStoreService } from '../../services/dashboard-store.service';
 import { getChart } from '../../services/get-component';
 
 @Component({
-  selector: 'dash-widget',
+  selector: 'dash-edit-widget',
   standalone: true,
-  imports: [CommonModule, MatCardModule, LetModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatInputModule,
+    LetModule,
+  ],
   template: ` <mat-card>
     <mat-card-header *ngrxLet="widget$ as widget">
-      <mat-card-title>
-        {{ widget?.title }}
-      </mat-card-title>
-      <mat-card-subtitle *ngIf="widget?.subTitle">
-        {{ widget?.subTitle }}
-      </mat-card-subtitle>
+      <div class="container">
+        <div class="button-area">
+          <button mat-icon-button (click)="deleteWidget()">
+            <mat-icon fontIcon="delete" />
+          </button>
+        </div>
+        <div class="title-input">
+          <mat-form-field>
+            <label>Title</label>
+            <input matInput [ngModel]="widget?.title" />
+          </mat-form-field>
+        </div>
+        <div class="sub-title-input">
+          <mat-form-field>
+            <label>Subtitle</label>
+            <input matInput [ngModel]="widget?.subTitle" />
+          </mat-form-field>
+        </div>
+        <div class="data-source-input"></div>
+      </div>
     </mat-card-header>
     <mat-card-content>
       <ng-container #anchor />
     </mat-card-content>
   </mat-card>`,
-  styleUrls: ['./widget.component.scss'],
-  encapsulation: ViewEncapsulation.Emulated,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./edit-widget.component.scss'],
 })
-export class WidgetComponent {
+export class EditWidgetComponent {
   #widgetId?: string;
   @Input() get widgetId(): string | undefined {
     return this.#widgetId;
@@ -71,6 +93,8 @@ export class WidgetComponent {
   readonly #injector = inject(Injector);
   readonly #dashboardDataService = inject(DashboardDataSourceService);
 
+  protected readonly editMode$ = this.#dashboardStoreService.editMode$;
+
   async #loadWidgetData(widget: DashboardWidget | undefined) {
     if (!widget?.dataSource) return;
 
@@ -89,6 +113,12 @@ export class WidgetComponent {
       });
 
       component?.changeDetectorRef.detectChanges();
+    }
+  }
+
+  protected deleteWidget() {
+    if (this.#widgetId) {
+      this.#dashboardStoreService.deleteWidgetById({ id: this.#widgetId });
     }
   }
 }

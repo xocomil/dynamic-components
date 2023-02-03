@@ -1,0 +1,43 @@
+:host {
+  display: block;
+
+  mat-card {
+    height: 100%;
+    width: 100%;
+
+    > mat-card-content {
+      max-height: 100%;
+      overflow: auto;
+      flex-grow: 1;
+    }
+  }
+}
+
+.container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 4em;
+  grid-template-rows: repeat(3, min-content);
+  gap: 0.5em;
+  grid-auto-flow: row;
+  grid-template-areas:
+    'title-input button-area'
+    'sub-title-input button-area'
+    'data-source-input button-area';
+}
+
+.button-area {
+  grid-area: button-area;
+}
+
+.title-input {
+  grid-area: title-input;
+}
+
+.sub-title-input {
+  grid-area: sub-title-input;
+}
+
+.data-source-input {
+  grid-area: data-source-input;
+}

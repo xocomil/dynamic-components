@@ -49,6 +49,7 @@ import { DashboardStoreService } from '../../services/dashboard-store.service';
           type="button"
           mat-raised-button
           color="primary"
+          (click)="save()"
         >
           <mat-icon fontIcon="save"></mat-icon>
           Save
@@ -91,5 +92,9 @@ export class ToolbarComponent {
 
   protected edit(): void {
     this.#dashboardStoreService.toggleEditMode();
+  }
+
+  protected save(): void {
+    this.#dashboardStoreService.save();
   }
 }
