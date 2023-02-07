@@ -117,6 +117,65 @@ export class DashboardStoreService extends ComponentStore<DashboardState> {
     });
   });
 
+  readonly updateTitle = this.updater(
+    (state, { id, title }: { id: string; title: string }) => {
+      return create(state, (draft) => {
+        draft.widgets = draft.widgets.map((widget) => {
+          if (widget.id === id) {
+            widget.title = title;
+          }
+
+          return widget;
+        });
+      });
+    }
+  );
+
+  readonly updateSubtitle = this.updater(
+    (state, { id, subtitle }: { id: string; subtitle: string }) => {
+      return create(state, (draft) => {
+        draft.widgets = draft.widgets.map((widget) => {
+          if (widget.id === id) {
+            widget.subTitle = subtitle;
+          }
+
+          return widget;
+        });
+      });
+    }
+  );
+
+  readonly updateDataSource = this.updater(
+    (
+      state,
+      { id, dataSource }: { id: string; dataSource: AvailableDataSources }
+    ) => {
+      return create(state, (draft) => {
+        draft.widgets = draft.widgets.map((widget) => {
+          if (widget.id === id) {
+            widget.dataSource = dataSource;
+          }
+
+          return widget;
+        });
+      });
+    }
+  );
+
+  readonly updateChartType = this.updater(
+    (state, { id, chartType }: { id: string; chartType: ChartType }) => {
+      return create(state, (draft) => {
+        draft.widgets = draft.widgets.map((widget) => {
+          if (widget.id === id) {
+            widget.chartType = chartType;
+          }
+
+          return widget;
+        });
+      });
+    }
+  );
+
   #setOldWidgets(oldWidgets: DashboardWidget[]): void {
     this.patchState({ oldWidgets });
   }

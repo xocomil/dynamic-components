@@ -17,13 +17,14 @@
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 4em;
-  grid-template-rows: repeat(3, min-content);
+  grid-template-rows: repeat(4, min-content);
   gap: 0.5em;
   grid-auto-flow: row;
   grid-template-areas:
     'title-input button-area'
     'sub-title-input button-area'
-    'data-source-input button-area';
+    'data-source-input button-area'
+    'chart-type-input button-area';
 }
 
 .button-area {
@@ -36,6 +37,10 @@
 
 .sub-title-input {
   grid-area: sub-title-input;
+}
+
+.chart-type-input {
+  grid-area: chart-type-input;
 }
 
 .data-source-input {
