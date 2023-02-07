@@ -11,10 +11,8 @@ import {
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { LetModule } from '@ngrx/component';
-import { BehaviorSubject, filter, switchMap, tap } from 'rxjs';
 import { DashboardWidget } from '../../models/dashboard-widget';
 import { DashboardDataSourceService } from '../../services/dashboard-data-source.service';
-import { DashboardStoreService } from '../../services/dashboard-store.service';
 import { getChart } from '../../services/get-component';
 
 @Component({
@@ -22,14 +20,7 @@ import { getChart } from '../../services/get-component';
   standalone: true,
   imports: [CommonModule, MatCardModule, LetModule],
   template: ` <mat-card>
-    <mat-card-header *ngrxLet="widget$ as widget">
-      <mat-card-title>
-        {{ widget?.title }}
-      </mat-card-title>
-      <mat-card-subtitle *ngIf="widget?.subTitle">
-        {{ widget?.subTitle }}
-      </mat-card-subtitle>
-    </mat-card-header>
+    <ng-content></ng-content>
     <mat-card-content>
       <ng-container #anchor />
     </mat-card-content>
@@ -39,32 +30,13 @@ import { getChart } from '../../services/get-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetComponent {
-  #widgetId?: string;
-  @Input() get widgetId(): string | undefined {
-    return this.#widgetId;
+  @Input() set widget(widget: DashboardWidget | undefined) {
+    this.#loadWidgetData(widget);
   }
-  set widgetId(widgetId: string | undefined) {
-    this.#widgetId = widgetId;
-
-    this.#widgetId$.next(widgetId);
-  }
-
-  #widgetId$ = new BehaviorSubject<string | undefined>(undefined);
-
-  protected widget$ = this.#widgetId$.pipe(
-    filter(Boolean),
-    switchMap((widgetId) => {
-      return this.#dashboardStoreService.getWidgetFromId(widgetId);
-    }),
-    tap((widget) => {
-      void this.#loadWidgetData(widget);
-    })
-  );
 
   @ViewChild('anchor', { static: true, read: ViewContainerRef })
   anchor!: ViewContainerRef;
 
-  readonly #dashboardStoreService = inject(DashboardStoreService);
   readonly #injector = inject(Injector);
   readonly #dashboardDataService = inject(DashboardDataSourceService);
 

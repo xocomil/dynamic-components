@@ -1,28 +1,18 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  inject,
-  Injector,
-  Input,
-  ViewChild,
-  ViewContainerRef,
-} from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { LetModule } from '@ngrx/component';
 import { ForModule } from '@rx-angular/template/for';
-import { BehaviorSubject, filter, switchMap, tap } from 'rxjs';
 import {
   AvailableDataSources,
   AvailableDataSourcesOptions,
 } from '../../models/available-datasources.model';
 import { ChartType, ChartTypeOptions } from '../../models/chart-type.model';
-import { DashboardWidget } from '../../models/dashboard-widget';
-import { DashboardDataSourceService } from '../../services/dashboard-data-source.service';
-import { DashboardStoreService } from '../../services/dashboard-store.service';
-import { getChart } from '../../services/get-component';
+import { WidgetComponent } from '../widget/widget.component';
+import { WidgetStoreService } from './../../services/widget.store.service';
 
 @Component({
   selector: 'dash-edit-widget',
@@ -35,9 +25,10 @@ import { getChart } from '../../services/get-component';
     MatCardModule,
     MatIconModule,
     LetModule,
+    WidgetComponent,
   ],
-  template: ` <mat-card>
-    <mat-card-header *ngrxLet="widget$ as widget">
+  template: ` <dash-widget *ngrxLet="widget$ as widget" [widget]="widget">
+    <mat-card-header>
       <div class="container">
         <div class="button-area">
           <button mat-icon-button (click)="deleteWidget()">
@@ -92,120 +83,39 @@ import { getChart } from '../../services/get-component';
         </div>
       </div>
     </mat-card-header>
-    <mat-card-content>
-      <ng-container #anchor />
-    </mat-card-content>
-  </mat-card>`,
+  </dash-widget>`,
   styleUrls: ['./edit-widget.component.scss'],
+  providers: [WidgetStoreService],
 })
 export class EditWidgetComponent {
-  #widgetId?: string;
-  @Input() get widgetId(): string | undefined {
-    return this.#widgetId;
-  }
-  set widgetId(widgetId: string | undefined) {
-    this.#widgetId = widgetId;
+  readonly #widgetStore = inject(WidgetStoreService);
 
-    this.#widgetId$.next(widgetId);
-  }
+  protected readonly widget$ = this.#widgetStore.currentWidget$;
 
-  #widgetId$ = new BehaviorSubject<string | undefined>(undefined);
+  @Input() set widgetId(widgetId: string | undefined) {
+    this.#widgetStore.setWidgetId(widgetId);
+  }
 
   protected dataSourceOptions = AvailableDataSourcesOptions;
   protected chartTypeOptions = ChartTypeOptions;
 
-  protected widget$ = this.#widgetId$.pipe(
-    filter(Boolean),
-    switchMap((widgetId) => {
-      return this.#dashboardStoreService.getWidgetFromId(widgetId);
-    }),
-    tap((widget) => {
-      void this.#loadWidgetData(widget);
-    })
-  );
-
-  @ViewChild('anchor', { static: true, read: ViewContainerRef })
-  anchor!: ViewContainerRef;
-
-  readonly #dashboardStoreService = inject(DashboardStoreService);
-  readonly #injector = inject(Injector);
-  readonly #dashboardDataService = inject(DashboardDataSourceService);
-
-  protected readonly editMode$ = this.#dashboardStoreService.editMode$;
-
-  async #loadWidgetData(widget: DashboardWidget | undefined) {
-    if (!widget?.dataSource) return;
-
-    const chart = await getChart(widget.chartType);
-
-    if (chart) {
-      this.anchor.clear();
-
-      const component = this.anchor.createComponent(chart, {
-        injector: Injector.create({
-          providers: [
-            this.#dashboardDataService.getProvider(widget.dataSource),
-          ],
-          parent: this.#injector,
-        }),
-      });
-
-      component?.changeDetectorRef.detectChanges();
-    }
-  }
-
   protected deleteWidget() {
-    if (this.#widgetId) {
-      this.#dashboardStoreService.deleteWidgetById({ id: this.#widgetId });
-    }
+    this.#widgetStore.deleteWidget();
   }
 
   protected titleChanged(title: string) {
-    if (!this.#widgetId) {
-      console.error('Widget id is not set.');
-
-      return;
-    }
-
-    this.#dashboardStoreService.updateTitle({ id: this.#widgetId, title });
+    this.#widgetStore.titleChanged(title);
   }
 
   protected subtitleChanged(subtitle: string) {
-    if (!this.#widgetId) {
-      console.error('Widget id is not set.');
-
-      return;
-    }
-
-    this.#dashboardStoreService.updateSubtitle({
-      id: this.#widgetId,
-      subtitle,
-    });
+    this.#widgetStore.subtitleChanged(subtitle);
   }
 
   protected dataSourceChanged(dataSource: AvailableDataSources) {
-    if (!this.#widgetId) {
-      console.error('Widget id is not set.');
-
-      return;
-    }
-
-    this.#dashboardStoreService.updateDataSource({
-      id: this.#widgetId,
-      dataSource,
-    });
+    this.#widgetStore.dataSourceChanged(dataSource);
   }
 
   protected chartTypeChanged(chartType: ChartType) {
-    if (!this.#widgetId) {
-      console.error('Widget id is not set.');
-
-      return;
-    }
-
-    this.#dashboardStoreService.updateChartType({
-      id: this.#widgetId,
-      chartType,
-    });
+    this.#widgetStore.chartTypeChanged(chartType);
   }
 }
