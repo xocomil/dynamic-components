@@ -9,9 +9,9 @@ import { MatCardModule } from '@angular/material/card';
 import { PushModule } from '@ngrx/component';
 import { ForModule } from '@rx-angular/template/for';
 import { BarChartComponent } from '../dashboard-components/bar-chart/bar-chart.component';
+import { DisplayWidgetComponent } from '../dashboard-components/display-widget/display-widget.component';
 import { DonutChartComponent } from '../dashboard-components/donut-chart/donut-chart.component';
 import { LineChartComponent } from '../dashboard-components/line-chart/line-chart.component';
-import { WidgetComponent } from '../dashboard-components/widget/widget.component';
 import { HoursWorkedDataSourceService } from '../data-source/hours-worked-data-source.service';
 import { SalesByPersonDataSourceService } from '../data-source/sales-by-person-data-source.service';
 import { ValueOverTimeDataSourceService } from '../data-source/value-over-time-data-source.service';
@@ -33,14 +33,17 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
     MatCardModule,
     PushModule,
     ToolbarComponent,
-    WidgetComponent,
+    DisplayWidgetComponent,
   ],
   template: `
     <header>Welcome to our Dashboard!</header>
     <dash-toolbar />
     <content>
       <ng-container *ngIf="!(editMode$ | ngrxPush); else editMode">
-        <dash-widget *rxFor="let widget of widgets$" [widgetId]="widget.id" />
+        <dash-display-widget
+          *rxFor="let widget of widgets$"
+          [widgetId]="widget.id"
+        />
       </ng-container>
     </content>
 

@@ -192,7 +192,9 @@ export class DashboardStoreService extends ComponentStore<DashboardState> {
     this.patchState({ refreshIntervalSeconds });
   }
 
-  getWidgetFromId(id: string): Observable<DashboardWidget | undefined> {
+  getWidgetFromId(
+    id: string | undefined
+  ): Observable<DashboardWidget | undefined> {
     return this.select((state) =>
       state.widgets.find((widget) => widget.id === id)
     );
