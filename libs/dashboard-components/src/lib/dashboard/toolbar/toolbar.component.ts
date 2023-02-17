@@ -44,6 +44,9 @@ import { DashboardStoreService } from '../../services/dashboard-store.service';
         </mat-select>
       </mat-form-field>
       <div class="buttons">
+        <button *ngIf="editMode$ | ngrxPush" mat-raised-button (click)="add()">
+          <mat-icon fontIcon="add" /> Add
+        </button>
         <button
           [disabled]="disableSave$ | ngrxPush"
           type="button"
@@ -85,6 +88,7 @@ export class ToolbarComponent {
   protected disableSave$ = this.#dashboardStoreService.editMode$.pipe(
     map((editMode) => !editMode)
   );
+  protected editMode$ = this.#dashboardStoreService.editMode$;
 
   protected refreshIntervalSecondsChanged(seconds: number): void {
     this.#dashboardStoreService.refreshIntervalChange(seconds);
@@ -96,5 +100,9 @@ export class ToolbarComponent {
 
   protected save(): void {
     this.#dashboardStoreService.save();
+  }
+
+  protected add(): void {
+    this.#dashboardStoreService.add();
   }
 }
