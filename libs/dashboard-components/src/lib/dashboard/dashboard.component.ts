@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  OnInit,
   ViewEncapsulation,
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
@@ -65,9 +66,13 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
     ValueOverTimeDataSourceService,
   ],
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   #dashboardStore = inject(DashboardStoreService);
 
   protected readonly widgets$ = this.#dashboardStore.widgets$;
   protected readonly editMode$ = this.#dashboardStore.editMode$;
+
+  ngOnInit() {
+    this.#dashboardStore.loadWidgets();
+  }
 }

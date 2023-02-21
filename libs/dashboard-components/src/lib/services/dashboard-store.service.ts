@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { create } from 'mutative';
 import {
@@ -9,9 +9,11 @@ import {
   tap,
   withLatestFrom,
 } from 'rxjs';
+import { WINDOW } from '../injection-tokens/window-injection.token';
 import { AvailableDataSources } from '../models/available-datasources.model';
 import { ChartType } from '../models/chart-type.model';
 import { DashboardWidget } from '../models/dashboard-widget';
+import { SaveWidgetsService } from './save-widgets.service';
 
 export type DashboardState = {
   refreshIntervalSeconds: number;
@@ -77,6 +79,9 @@ export class DashboardStoreService extends ComponentStore<DashboardState> {
 
   readonly #oldWidgets$ = this.select((state) => state.oldWidgets);
 
+  readonly #window = inject(WINDOW);
+  readonly #saveWidgetsService = inject(SaveWidgetsService);
+
   constructor() {
     super(initialState());
   }
@@ -107,14 +112,28 @@ export class DashboardStoreService extends ComponentStore<DashboardState> {
     save$.pipe(
       tap(() => {
         this.#setEditMode(false);
+
+        this.#saveWidgets();
       })
     )
   );
 
+  readonly #saveWidgets = this.effect((save$: Observable<void>) =>
+    save$.pipe(
+      withLatestFrom(this.widgets$),
+      switchMap(([, widgets]) => this.#saveWidgetsService.saveWidgets(widgets))
+    )
+  );
+
+  readonly loadWidgets = this.effect((load$: Observable<void>) =>
+    load$.pipe(
+      switchMap(() => this.#saveWidgetsService.loadWidgets()),
+      tap((widgets) => this.#setWidgets(widgets))
+    )
+  );
+
   readonly add = this.updater((state) => {
-    const widgetId = (Math.floor(Math.random() * 1000) + Date.now()).toString(
-      36
-    );
+    const widgetId = this.#window.crypto.randomUUID();
 
     return create(state, (draft) => {
       draft.widgets.push({
