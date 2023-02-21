@@ -90,10 +90,10 @@ export class DashboardStoreService extends ComponentStore<DashboardState> {
   toggleEditMode = this.effect((toggle$: Observable<void>) =>
     toggle$.pipe(
       withLatestFrom(this.editMode$, this.widgets$, this.#oldWidgets$),
-      tap(([, editMode, widgets, oldWidgets]) => {
-        this.#setEditMode(!editMode);
+      tap(([, displayMode, widgets, oldWidgets]) => {
+        this.#setEditMode(!displayMode);
 
-        if (!editMode) {
+        if (!displayMode) {
           this.#setOldWidgets(widgets);
         } else {
           this.#setOldWidgets([]);
@@ -110,6 +110,22 @@ export class DashboardStoreService extends ComponentStore<DashboardState> {
       })
     )
   );
+
+  readonly add = this.updater((state) => {
+    const widgetId = (Math.floor(Math.random() * 1000) + Date.now()).toString(
+      36
+    );
+
+    return create(state, (draft) => {
+      draft.widgets.push({
+        id: widgetId,
+        title: '',
+        subTitle: '',
+        chartType: ChartType.bar,
+        dataSource: AvailableDataSources.hoursWorked,
+      });
+    });
+  });
 
   readonly deleteWidgetById = this.updater((state, { id }: { id: string }) => {
     return create(state, (draft) => {

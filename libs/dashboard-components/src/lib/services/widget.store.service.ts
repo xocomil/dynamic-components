@@ -49,7 +49,7 @@ export class WidgetStoreService extends ComponentStore<WidgetState> {
   readonly titleChanged = this.effect((title$: Observable<string>) =>
     title$.pipe(
       withLatestFrom(this.widgetId$),
-      filter(isIdDefined),
+      filterNullIds(),
       tap(([title, id]) => {
         this.#dashboardStore.updateTitle({ id, title });
       })
@@ -59,7 +59,7 @@ export class WidgetStoreService extends ComponentStore<WidgetState> {
   readonly subtitleChanged = this.effect((subtitle$: Observable<string>) =>
     subtitle$.pipe(
       withLatestFrom(this.widgetId$),
-      filter(isIdDefined),
+      filterNullIds(),
       tap(([subtitle, id]) => {
         this.#dashboardStore.updateSubtitle({
           id,
@@ -73,7 +73,7 @@ export class WidgetStoreService extends ComponentStore<WidgetState> {
     (dataSource$: Observable<AvailableDataSources>) =>
       dataSource$.pipe(
         withLatestFrom(this.widgetId$),
-        filter(isIdDefined),
+        filterNullIds(),
         tap(([dataSource, id]) => {
           this.#dashboardStore.updateDataSource({ id, dataSource });
         })
@@ -83,7 +83,7 @@ export class WidgetStoreService extends ComponentStore<WidgetState> {
   readonly chartTypeChanged = this.effect((chartType$: Observable<ChartType>) =>
     chartType$.pipe(
       withLatestFrom(this.widgetId$),
-      filter(isIdDefined),
+      filterNullIds(),
       tap(([chartType, id]) => {
         this.#dashboardStore.updateChartType({ id, chartType });
       })
@@ -103,7 +103,6 @@ export class WidgetStoreService extends ComponentStore<WidgetState> {
   }
 }
 
-// TODO: create our own rxjs operator for this.
 const isIdDefined = <T>(
   titleAndId: [T, string | undefined]
 ): titleAndId is [T, string] => {
@@ -115,3 +114,5 @@ const isIdDefined = <T>(
 
   return true;
 };
+
+const filterNullIds = () => filter(isIdDefined);
