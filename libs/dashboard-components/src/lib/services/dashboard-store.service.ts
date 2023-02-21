@@ -125,6 +125,13 @@ export class DashboardStoreService extends ComponentStore<DashboardState> {
     )
   );
 
+  readonly loadWidgets = this.effect((load$: Observable<void>) =>
+    load$.pipe(
+      switchMap(() => this.#saveWidgetsService.loadWidgets()),
+      tap((widgets) => this.#setWidgets(widgets))
+    )
+  );
+
   readonly add = this.updater((state) => {
     const widgetId = this.#window.crypto.randomUUID();
 
