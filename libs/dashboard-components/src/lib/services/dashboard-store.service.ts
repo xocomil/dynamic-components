@@ -13,6 +13,7 @@ import { WINDOW } from '../injection-tokens/window-injection.token';
 import { AvailableDataSources } from '../models/available-datasources.model';
 import { ChartType } from '../models/chart-type.model';
 import { DashboardWidget } from '../models/dashboard-widget';
+import { SaveWidgetsService } from './save-widgets.service';
 
 export type DashboardState = {
   refreshIntervalSeconds: number;
@@ -79,6 +80,7 @@ export class DashboardStoreService extends ComponentStore<DashboardState> {
   readonly #oldWidgets$ = this.select((state) => state.oldWidgets);
 
   readonly #window = inject(WINDOW);
+  readonly #saveWidgetsService = inject(SaveWidgetsService);
 
   constructor() {
     super(initialState());
@@ -110,7 +112,16 @@ export class DashboardStoreService extends ComponentStore<DashboardState> {
     save$.pipe(
       tap(() => {
         this.#setEditMode(false);
+
+        this.#saveWidgets();
       })
+    )
+  );
+
+  readonly #saveWidgets = this.effect((save$: Observable<void>) =>
+    save$.pipe(
+      withLatestFrom(this.widgets$),
+      switchMap(([, widgets]) => this.#saveWidgetsService.saveWidgets(widgets))
     )
   );
 
