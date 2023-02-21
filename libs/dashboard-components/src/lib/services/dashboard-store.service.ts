@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { create } from 'mutative';
 import {
@@ -9,6 +9,7 @@ import {
   tap,
   withLatestFrom,
 } from 'rxjs';
+import { WINDOW } from '../injection-tokens/window-injection.token';
 import { AvailableDataSources } from '../models/available-datasources.model';
 import { ChartType } from '../models/chart-type.model';
 import { DashboardWidget } from '../models/dashboard-widget';
@@ -77,6 +78,8 @@ export class DashboardStoreService extends ComponentStore<DashboardState> {
 
   readonly #oldWidgets$ = this.select((state) => state.oldWidgets);
 
+  readonly #window = inject(WINDOW);
+
   constructor() {
     super(initialState());
   }
@@ -112,9 +115,7 @@ export class DashboardStoreService extends ComponentStore<DashboardState> {
   );
 
   readonly add = this.updater((state) => {
-    const widgetId = (Math.floor(Math.random() * 1000) + Date.now()).toString(
-      36
-    );
+    const widgetId = this.#window.crypto.randomUUID();
 
     return create(state, (draft) => {
       draft.widgets.push({
